@@ -112,12 +112,14 @@ int main(void)
   init_params.TEScanline = 0; // idk what this line is
   init_params.Timings = timing_params;
 
+  ST7789V_RegisterBusIO(&ST7789, &ST7789V_IO);
+
   ST7789V_LCD_Driver.Init(&ST7789, &init_params);
   ST7789V_LCD_Driver.DisplayOn(&ST7789); // idk if necassary
 
   ST7789V_LCD_Driver.SetPixel(&ST7789, 100, 110, 100);
-  ST7789V_LCD_Driver.FillRect(&ST7789, 40, 50, 60, 70, 80);
 
+  uint32_t i = 0;
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -132,12 +134,13 @@ int main(void)
 	  }
 	  if(HAL_GPIO_ReadPin (GPIOB, GPIO_PIN_15)) {
 		  printf("Button 1 (B15) pressed\r\n");
-		  //ST7789_FillScreen(ST7789_RED);
+		  ST7789V_LCD_Driver.SetPixel(&ST7789, i, i, i);
+		  i++;
 	  } else {
-		  //ST7789_FillScreen(ST7789_BLUE);
+		  ST7789V_LCD_Driver.SetPixel(&ST7789, 100, 110, 100);
 	  }
 
-	  HAL_Delay(10);
+	  HAL_Delay(1);
   }
   /* USER CODE END 3 */
 }
