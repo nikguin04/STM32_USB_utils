@@ -33,7 +33,7 @@ extern "C" {
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "st7789v.h"
-#include "st7789v_io.h"
+#include <st7789v_io.h>
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
@@ -59,6 +59,18 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define ST7789V_DC_Pin GPIO_PIN_3
+#define ST7789V_DC_GPIO_Port GPIOA
+#define ST7789V_CS_Pin GPIO_PIN_4
+#define ST7789V_CS_GPIO_Port GPIOA
+#define ST7789V_SCK_Pin GPIO_PIN_5
+#define ST7789V_SCK_GPIO_Port GPIOA
+#define ST7789V_MISO_Pin GPIO_PIN_6
+#define ST7789V_MISO_GPIO_Port GPIOA
+#define ST7789V_MOSI_Pin GPIO_PIN_7
+#define ST7789V_MOSI_GPIO_Port GPIOA
+#define ST7789V_RST_Pin GPIO_PIN_0
+#define ST7789V_RST_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
 

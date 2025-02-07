@@ -113,7 +113,6 @@ int32_t st7789v_recv_data_dma(st7789v_ctx_t *ctx, uint8_t *pdata, uint32_t lengt
   return ctx->RecvDataDMA(ctx->handle, pdata, length);
 }
 
-
 /**
   * @}
   */ 

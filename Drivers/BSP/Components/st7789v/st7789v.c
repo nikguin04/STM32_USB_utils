@@ -70,7 +70,7 @@ ST7789V_LCD_Drv_t   ST7789V_LCD_Driver =
   NULL, // ST7789V_DrawVLine,
   NULL, // ST7789V_FillRect,
   NULL, // ST7789V_GetPixel,
-  ST7789V_SetPixel, // ST7789V_SetPixel,
+  NULL, // ST7789V_SetPixel,
   ST7789V_GetXSize,
   ST7789V_GetYSize,
 };
@@ -706,43 +706,3 @@ static int32_t ST7789V_Delay(ST7789V_Object_t *pObj, uint32_t Delay)
   */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
-
-
-// Start of implementations from NPJ:
-int32_t ST7789V_SetPixel(ST7789V_Object_t *pObj, uint32_t Xpos, uint32_t Ypos, uint32_t Color) {
-
-	  int32_t ret = ST7789V_OK;
-	  uint8_t __IO reg;
-	  uint8_t __IO parameter[4];
-
-	  // See documentation 8.8.38
-
-	  parameter[0] = 0b00001000;
-	  parameter[1] = 0b00000000;
-	  parameter[2] = 0b00001000;
-	  parameter[3] = 0b00000000;
-	  reg = ST7789V_CASET; // WRITE COLUMN
-	  ret = st7789v_write_reg(&pObj->Ctx, &reg, 1);
-	  ret += st7789v_send_data(&pObj->Ctx, (uint8_t *)&parameter, 4);
-
-	  reg = ST7789V_RASET; // WRITE ROW
-	  ret = st7789v_write_reg(&pObj->Ctx, &reg, 1);
-	  ret += st7789v_send_data(&pObj->Ctx, (uint8_t *)&parameter, 4);
-
-	  // Writing color is strictly like this when using rgb565, see (ST7789V: 8.8.38)
-	  parameter[0] = 0b11111100;
-	  parameter[1] = 0b01000111;
-	  parameter[2] = 0b11000000;
-	  // Color should be RED,BLUE
-	  reg = ST7789V_GRAM; // WRITE COLOR
-	  ret = st7789v_write_reg(&pObj->Ctx, &reg, 1);
-	  ret += st7789v_send_data(&pObj->Ctx, (uint8_t *)&parameter, 3);
-
-
-	  //#define ST7789V_CASET                     0x2AU   /* Colomn address register */
-	  //#define ST7789V_RASET                     0x2BU   /* Raw address register */
-	  //#define ST7789V_GRAM                      0x2CU   /* GRAM register */
-
-	  return ret;
-}
-

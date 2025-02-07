@@ -27,7 +27,6 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "st7789v_reg.h"
-//#include "st7789v_impl.h"
 #include <stddef.h>
 
 /** @addtogroup BSP
