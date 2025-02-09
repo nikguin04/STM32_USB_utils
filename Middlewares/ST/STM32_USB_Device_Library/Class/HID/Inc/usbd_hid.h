@@ -68,6 +68,14 @@ extern "C" {
 
 #define USBD_HID_REQ_SET_REPORT                         0x09U
 #define USBD_HID_REQ_GET_REPORT                         0x01U
+
+
+/* USER CODE BEGIN HID_EXT_DEFINE */
+
+#define HID_KEYBOARD_REPORT_DESC_SIZE 0x3F
+
+/* USER CODE END HID_EXT_DEFINE */
+
 /**
   * @}
   */
@@ -110,6 +118,22 @@ typedef struct
 /**
   * @}
   */
+
+/* BEGIN USER CODE KEYBOARD_STRUCT */
+
+typedef struct
+{
+	uint8_t MODIFIER;
+	uint8_t RESERVED;
+	uint8_t KEYCODE1;
+	uint8_t KEYCODE2;
+	uint8_t KEYCODE3;
+	uint8_t KEYCODE4;
+	uint8_t KEYCODE5;
+	uint8_t KEYCODE6;
+} Keyboard_Report_Structure;
+
+/* END USER CODE KEYBOARD_STRUCT */
 
 
 

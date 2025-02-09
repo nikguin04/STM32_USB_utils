@@ -42,6 +42,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
+extern USBD_HandleTypeDef hUsbDeviceFS;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -90,6 +91,10 @@ int main(void)
   MX_USB_DEVICE_Init();
   /* USER CODE BEGIN 2 */
   //USBD_Interface_fops_FS.Init();
+  Keyboard_Report_Structure KR = {
+		  0 /* MODIFIER */, 0 /* RESERVED */,
+		  'A','B',' ','1','2','3'
+  };
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -104,6 +109,7 @@ int main(void)
 	  }
 	  if(HAL_GPIO_ReadPin (GPIOB, GPIO_PIN_15)) {
 		  printf("Button 1 (B15) pressed\r\n");
+		  USBD_HID_SendReport(&hUsbDeviceFS, &KR, sizeof(KR));
 	  }
 
 	  HAL_Delay(10);

@@ -158,7 +158,7 @@ __ALIGN_BEGIN static uint8_t USBD_HID_CfgDesc[USB_HID_CONFIG_DESC_SIZ] __ALIGN_E
   0x01,                                               /* bNumEndpoints */
   0x03,                                               /* bInterfaceClass: HID */
   0x01,                                               /* bInterfaceSubClass : 1=BOOT, 0=no boot */
-  0x02,                                               /* nInterfaceProtocol : 0=none, 1=keyboard, 2=mouse */
+  0x01,                                               /* nInterfaceProtocol : 0=none, 1=keyboard, 2=mouse */
   0,                                                  /* iInterface: Index of string descriptor */
   /******************** Descriptor of Joystick Mouse HID ********************/
   /* 18 */
@@ -169,7 +169,7 @@ __ALIGN_BEGIN static uint8_t USBD_HID_CfgDesc[USB_HID_CONFIG_DESC_SIZ] __ALIGN_E
   0x00,                                               /* bCountryCode: Hardware target country */
   0x01,                                               /* bNumDescriptors: Number of HID class descriptors to follow */
   0x22,                                               /* bDescriptorType */
-  HID_MOUSE_REPORT_DESC_SIZE,                         /* wItemLength: Total length of Report descriptor */
+  HID_KEYBOARD_REPORT_DESC_SIZE,                         /* wItemLength: Total length of Report descriptor */
   0x00,
   /******************** Descriptor of Mouse endpoint ********************/
   /* 27 */
@@ -258,6 +258,44 @@ __ALIGN_BEGIN static uint8_t HID_MOUSE_ReportDesc[HID_MOUSE_REPORT_DESC_SIZE] __
   0xB1, 0x01,        /*   Feature (Const,Array,Abs,NoWrp)      */
   0xC0               /* End Collection                         */
 };
+
+/* BEGIN USER CODE KEYBOARD_R_DESC */
+__ALIGN_BEGIN static uint8_t HID_KEYBOARD_ReportDesc[HID_KEYBOARD_REPORT_DESC_SIZE] __ALIGN_END =
+{ // Taken from https://www.usb.org/sites/default/files/documents/hid1_11.pdf : Page 69
+    0x05, 0x01,                    // USAGE_PAGE (Generic Desktop)
+    0x09, 0x06,                    // USAGE (Keyboard)
+    0xa1, 0x01,                    // COLLECTION (Application)
+    0x05, 0x07,                    //   USAGE_PAGE (Key Codes)
+    0x19, 0xe0,                    //   USAGE_MINIMUM (Keyboard LeftControl 224)
+    0x29, 0xe7,                    //   USAGE_MAXIMUM (Keyboard Right GUI 231)
+    0x15, 0x00,                    //   LOGICAL_MINIMUM (0)
+    0x25, 0x01,                    //   LOGICAL_MAXIMUM (1)
+    0x75, 0x01,                    //   REPORT_SIZE (1)
+    0x95, 0x08,                    //   REPORT_COUNT (8)
+    0x81, 0x02,                    //   INPUT (Data,Var,Abs) 								; MODIFIER BYTE
+    0x95, 0x01,                    //   REPORT_COUNT (1)
+    0x75, 0x08,                    //   REPORT_SIZE (8)
+    0x81, 0x01,                    //   INPUT (Cnst)										; RESERVED BYTE
+    0x95, 0x05,                    //   REPORT_COUNT (5)
+    0x75, 0x01,                    //   REPORT_SIZE (1)
+    0x05, 0x08,                    //   USAGE_PAGE (LEDs for numpad, scroll lock, etc)
+    0x19, 0x01,                    //   USAGE_MINIMUM (Num Lock 1)
+    0x29, 0x05,                    //   USAGE_MAXIMUM (Kana 5)
+    0x91, 0x02,                    //   OUTPUT (Data,Var,Abs)								; LED REPORT
+    0x95, 0x01,                    //   REPORT_COUNT (1)
+    0x75, 0x03,                    //   REPORT_SIZE (3)
+    0x91, 0x01,                    //   OUTPUT (Cnst)										; LED REPORT PADDING
+    0x95, 0x06,                    //   REPORT_COUNT (6)
+    0x75, 0x08,                    //   REPORT_SIZE (8)
+    0x15, 0x00,                    //   LOGICAL_MINIMUM (0)
+    0x25, 0x65,                    //   LOGICAL_MAXIMUM (101)
+    0x05, 0x07,                    //   USAGE_PAGE (Key Codes)
+    0x19, 0x00,                    //   USAGE_MINIMUM (Reserved (no event indicated) 0)
+    0x29, 0x65,                    //   USAGE_MAXIMUM (Keyboard Application 101)
+    0x81, 0x00,                    //   INPUT (Data,Ary)									; KEY ARRAYS (6 bytes)
+    0xc0                           // END_COLLECTION
+};
+/* END USER CODE KEYBOARD_R_DESC */
 
 static uint8_t HIDInEpAdd = HID_EPIN_ADDR;
 
