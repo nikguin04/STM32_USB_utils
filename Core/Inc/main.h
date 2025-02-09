@@ -29,11 +29,9 @@ extern "C" {
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_hal.h"
 
-#include "lcd_io.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "st7789v.h"
-#include <st7789v_io.h>
+#include "st7789.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
@@ -65,8 +63,6 @@ void Error_Handler(void);
 #define ST7789V_CS_GPIO_Port GPIOA
 #define ST7789V_SCK_Pin GPIO_PIN_5
 #define ST7789V_SCK_GPIO_Port GPIOA
-#define ST7789V_MISO_Pin GPIO_PIN_6
-#define ST7789V_MISO_GPIO_Port GPIOA
 #define ST7789V_MOSI_Pin GPIO_PIN_7
 #define ST7789V_MOSI_GPIO_Port GPIOA
 #define ST7789V_RST_Pin GPIO_PIN_0

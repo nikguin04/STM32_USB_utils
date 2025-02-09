@@ -40,14 +40,16 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
+SPI_HandleTypeDef hspi1;
 
 /* USER CODE BEGIN PV */
-ST7789V_Object_t ST7789;
+//ST7789V_Object_t ST7789;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
+static void MX_SPI1_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -91,10 +93,11 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_USB_DEVICE_Init();
+  MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
   //USBD_Interface_fops_FS.Init();
 
-  ST7789V_TimingParams_t timing_params;
+  /*ST7789V_TimingParams_t timing_params;
   timing_params.hsync = 10;
   timing_params.vsync = 4;
   timing_params.hbp = 10;
@@ -110,7 +113,7 @@ int main(void)
   init_params.SwapRB = 0; // Swap red and blue i think
   init_params.TEMode = ST7789V_TE_DISABLED;
   init_params.TEScanline = 0; // idk what this line is
-  init_params.Timings = timing_params;
+  init_params.Timings = timing_params;*/
 
   //ST7789V_RegisterBusIO(&ST7789, &ST7789V_IO);
 
@@ -119,11 +122,12 @@ int main(void)
 
   //ST7789V_LCD_Driver.SetPixel(&ST7789, 100, 110, 100);
 
-  BSP_LCD_Init(0, ST7789V_ORIENTATION_LANDSCAPE);
+  //BSP_LCD_Init(0, ST7789V_ORIENTATION_LANDSCAPE);
   //BSP_LCD_DisplayOn(0);
-
+  ST7789_Init();
   uint32_t i = 0;
-  uint8_t rgb565dat[100] = {0xff, 0xff, 0xff};
+  ST7789_Test();
+  //uint8_t rgb565dat[16] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -139,7 +143,8 @@ int main(void)
 	  if(HAL_GPIO_ReadPin (GPIOB, GPIO_PIN_15)) {
 		  printf("Button 1 (B15) pressed %lu\r\n", i);
 		  //ST7789V_LCD_Driver.SetPixel(&ST7789, i, i, i);
-		  BSP_LCD_FillRGBRect(0, 0, rgb565dat, 10, 10, 1, 1);
+		  //BSP_LCD_FillRGBRect(0, 0, rgb565dat, i%200, i%200, 2, 2);
+		  ST7789_Fill(10, 10, i%200, i%200, 0xF0FF);
 		  i++;
 	  } else {
 		  //ST7789V_LCD_Driver.SetPixel(&ST7789, 100, 110, 100);
@@ -193,6 +198,44 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
+}
+
+/**
+  * @brief SPI1 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_SPI1_Init(void)
+{
+
+  /* USER CODE BEGIN SPI1_Init 0 */
+
+  /* USER CODE END SPI1_Init 0 */
+
+  /* USER CODE BEGIN SPI1_Init 1 */
+
+  /* USER CODE END SPI1_Init 1 */
+  /* SPI1 parameter configuration*/
+  hspi1.Instance = SPI1;
+  hspi1.Init.Mode = SPI_MODE_MASTER;
+  hspi1.Init.Direction = SPI_DIRECTION_1LINE;
+  hspi1.Init.DataSize = SPI_DATASIZE_8BIT;
+  hspi1.Init.CLKPolarity = SPI_POLARITY_HIGH;
+  hspi1.Init.CLKPhase = SPI_PHASE_1EDGE;
+  hspi1.Init.NSS = SPI_NSS_SOFT;
+  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_2;
+  hspi1.Init.FirstBit = SPI_FIRSTBIT_MSB;
+  hspi1.Init.TIMode = SPI_TIMODE_DISABLE;
+  hspi1.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
+  hspi1.Init.CRCPolynomial = 10;
+  if (HAL_SPI_Init(&hspi1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN SPI1_Init 2 */
+
+  /* USER CODE END SPI1_Init 2 */
+
 }
 
 /**
