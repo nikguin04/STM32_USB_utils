@@ -28,23 +28,43 @@ typedef struct
 } ST7789V_IO_t;*/
 
 
-ST7789V_Init_Func Init() { return 0; };
+ST7789V_Init_Func Init() {
+	return 0;
+};
 
 ST7789V_WriteReg_Func WriteReg(volatile uint8_t* reg, uint32_t length) { // See doc 8.4.2 Command write mode
-	//HAL_GPIO_WritePin(ST7789V_DC_GPIO_Port, 0, 0);
-
-	//GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin, GPIO_PinState PinState
-
 	HAL_GPIO_WritePin(ST7789V_DC_GPIO_Port, ST7789V_DC_Pin, 0); // Command D/CX indicates whether the byte is command (D/CX=’0’) or parameter/RAM data (D/CX=’1’).
 	HAL_GPIO_WritePin(ST7789V_CS_GPIO_Port, ST7789V_CS_Pin, 0); // CS LOW = Select display
 	HAL_SPI_Transmit(&hspi1, reg, length, HAL_MAX_DELAY);
 	HAL_GPIO_WritePin(ST7789V_CS_GPIO_Port, ST7789V_CS_Pin, 1);   // CS HIGH = Deselect display
 }
 
-ST7789V_IO_t ST7789V_IO = {
-		Init,
-		NULL,
-		0x1,
-		WriteReg
+ST7789V_SendData_Func SendData(uint8_t* buf, uint32_t length) {
+	HAL_GPIO_WritePin(ST7789V_DC_GPIO_Port, ST7789V_DC_Pin, 1); // Command D/CX indicates whether the byte is command (D/CX=’0’) or parameter/RAM data (D/CX=’1’).
+	HAL_GPIO_WritePin(ST7789V_CS_GPIO_Port, ST7789V_CS_Pin, 0); // CS LOW = Select display
+	HAL_SPI_Transmit(&hspi1, buf, length, HAL_MAX_DELAY);
+	HAL_GPIO_WritePin(ST7789V_CS_GPIO_Port, ST7789V_CS_Pin, 1);   // CS HIGH = Deselect display
+}
 
+ST7789V_GetTick_Func Tick() {
+	HAL_GetTick();
+}
+
+ST7789V_Delay_Func Delay(uint32_t ms) { // I think time is supposed to be ms
+	HAL_Delay(ms);
+}
+
+
+ST7789V_IO_t ST7789V_IO = {
+	Init,
+	NULL,
+	0x1,
+	WriteReg,
+	NULL,
+	SendData,
+	NULL,
+	NULL,
+	NULL,
+	Tick,
+	Delay,
 };

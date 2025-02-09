@@ -11,6 +11,7 @@
 #include <stddef.h>
 #include "st7789v.h"
 #include "main.h" // Include for pin names - i dont know why stm32cube makes this in main
+#include "lcd_io.h"
 //#include "stm32f4xx_hal_def.h"
 //#include "stm32f4xx_hal_gpio.h"
 //#include "custom_bus.h"

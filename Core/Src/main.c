@@ -112,14 +112,18 @@ int main(void)
   init_params.TEScanline = 0; // idk what this line is
   init_params.Timings = timing_params;
 
-  ST7789V_RegisterBusIO(&ST7789, &ST7789V_IO);
+  //ST7789V_RegisterBusIO(&ST7789, &ST7789V_IO);
 
-  ST7789V_LCD_Driver.Init(&ST7789, &init_params);
-  ST7789V_LCD_Driver.DisplayOn(&ST7789); // idk if necassary
+  //ST7789V_LCD_Driver.Init(&ST7789, &init_params);
+  //ST7789V_LCD_Driver.DisplayOn(&ST7789); // idk if necassary
 
-  ST7789V_LCD_Driver.SetPixel(&ST7789, 100, 110, 100);
+  //ST7789V_LCD_Driver.SetPixel(&ST7789, 100, 110, 100);
+
+  BSP_LCD_Init(0, ST7789V_ORIENTATION_LANDSCAPE);
+  //BSP_LCD_DisplayOn(0);
 
   uint32_t i = 0;
+  uint8_t rgb565dat[100] = {0xff, 0xff, 0xff};
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -133,11 +137,12 @@ int main(void)
 		  printf("Button 1 (B14) pressed\r\n");
 	  }
 	  if(HAL_GPIO_ReadPin (GPIOB, GPIO_PIN_15)) {
-		  printf("Button 1 (B15) pressed\r\n");
-		  ST7789V_LCD_Driver.SetPixel(&ST7789, i, i, i);
+		  printf("Button 1 (B15) pressed %lu\r\n", i);
+		  //ST7789V_LCD_Driver.SetPixel(&ST7789, i, i, i);
+		  BSP_LCD_FillRGBRect(0, 0, rgb565dat, 10, 10, 1, 1);
 		  i++;
 	  } else {
-		  ST7789V_LCD_Driver.SetPixel(&ST7789, 100, 110, 100);
+		  //ST7789V_LCD_Driver.SetPixel(&ST7789, 100, 110, 100);
 	  }
 
 	  HAL_Delay(1);
