@@ -122,7 +122,7 @@ typedef struct
 /* BEGIN USER CODE KEYBOARD_STRUCT */
 
 typedef struct
-{
+{ // Key codes located at https://usb.org/sites/default/files/hut1_6.pdf : Chapter 10
 	uint8_t MODIFIER;
 	uint8_t RESERVED;
 	uint8_t KEYCODE1;
@@ -132,6 +132,7 @@ typedef struct
 	uint8_t KEYCODE5;
 	uint8_t KEYCODE6;
 } Keyboard_Report_Structure;
+#define KEYBOARD_REPORT_LENGTH (uint16_t) 8
 
 /* END USER CODE KEYBOARD_STRUCT */
 

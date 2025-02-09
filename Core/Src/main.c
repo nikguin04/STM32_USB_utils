@@ -18,10 +18,10 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "usb_device.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "usbd_hid.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -91,10 +91,15 @@ int main(void)
   MX_USB_DEVICE_Init();
   /* USER CODE BEGIN 2 */
   //USBD_Interface_fops_FS.Init();
-  Keyboard_Report_Structure KR = {
-		  0 /* MODIFIER */, 0 /* RESERVED */,
-		  'A','B',' ','1','2','3'
+  Keyboard_Report_Structure KR_example = {
+	  0 /* MODIFIER */, 0 /* RESERVED */,
+	  0x04, 0x05, 0x2C, 0x1E, 0x1F, 0x20 // "ab 123"
   };
+  Keyboard_Report_Structure KR_releaseall = {
+	  0 /* MODIFIER */, 0 /* RESERVED */,
+	  0,0,0,0,0,0
+  };
+  uint8_t GPIO_15_awaiting_release = 0;
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -107,12 +112,16 @@ int main(void)
 	  if(HAL_GPIO_ReadPin (GPIOB, GPIO_PIN_14)) {
 		  printf("Button 1 (B14) pressed\r\n");
 	  }
-	  if(HAL_GPIO_ReadPin (GPIOB, GPIO_PIN_15)) {
+	  if(HAL_GPIO_ReadPin (GPIOB, GPIO_PIN_15)) { // WARNING: This logic is faulty in the USB report cause of HAL_Delay on low clock speed (getting errors when delay is only at 10ms)
 		  printf("Button 1 (B15) pressed\r\n");
-		  USBD_HID_SendReport(&hUsbDeviceFS, &KR, sizeof(KR));
+		  GPIO_15_awaiting_release = 1;
+		  USBD_HID_SendReport(&hUsbDeviceFS, (uint8_t*) &KR_example, KEYBOARD_REPORT_LENGTH);
+	  } else if (GPIO_15_awaiting_release) { // Release all keys is GPIO 15 is let go of
+		  GPIO_15_awaiting_release = 0;
+		  USBD_HID_SendReport(&hUsbDeviceFS, (uint8_t*) &KR_releaseall, KEYBOARD_REPORT_LENGTH);
 	  }
 
-	  HAL_Delay(10);
+	  HAL_Delay(20);
   }
   /* USER CODE END 3 */
 }
