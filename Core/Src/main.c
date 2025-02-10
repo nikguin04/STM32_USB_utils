@@ -92,8 +92,10 @@ int main(void)
   /* USER CODE BEGIN 2 */
   //USBD_Interface_fops_FS.Init();
   Keyboard_Report_Structure KR_example = {
-	  0 /* MODIFIER */, 0 /* RESERVED */,
-	  0x04, 0x05, 0x2C, 0x1E, 0x1F, 0x20 // "ab 123"
+	  0b00000010, /* MODIFIER */ // LShift
+	  0, /* RESERVED */
+	  //0x04, 0x05, 0x2C, 0x1E, 0x1F, 0x20 // "ab 123"
+	  0x00, 0x04, 0x05, 0x06, 0x07, 0x08 // "abcde"
   };
   Keyboard_Report_Structure KR_releaseall = {
 	  0 /* MODIFIER */, 0 /* RESERVED */,
