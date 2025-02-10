@@ -63,7 +63,7 @@
   */
 
 /*---------- -----------*/
-#define USBD_MAX_NUM_INTERFACES     1U
+#define USBD_MAX_NUM_INTERFACES     2U
 /*---------- -----------*/
 #define USBD_MAX_NUM_CONFIGURATION     1U
 /*---------- -----------*/
@@ -93,7 +93,8 @@
 /* Memory management macros make sure to use static memory allocation */
 /** Alias for memory allocation. */
 
-#define USBD_malloc         (void *)USBD_static_malloc
+#define USBD_malloc_HID         (void *)USBD_static_malloc_HID
+#define USBD_malloc_CDC         (void *)USBD_static_malloc_CDC
 
 /** Alias for memory release. */
 #define USBD_free           USBD_static_free

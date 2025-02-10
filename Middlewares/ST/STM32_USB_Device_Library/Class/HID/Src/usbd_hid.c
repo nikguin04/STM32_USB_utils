@@ -320,7 +320,7 @@ static uint8_t USBD_HID_Init(USBD_HandleTypeDef *pdev, uint8_t cfgidx)
 
   USBD_HID_HandleTypeDef *hhid;
 
-  hhid = (USBD_HID_HandleTypeDef *)USBD_malloc(sizeof(USBD_HID_HandleTypeDef));
+  hhid = (USBD_HID_HandleTypeDef *)USBD_malloc_HID(sizeof(USBD_HID_HandleTypeDef));
 
   if (hhid == NULL)
   {
