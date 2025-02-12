@@ -1,0 +1,8 @@
+bDeviceClass set to 0, see spec 1.1: Table 9-7 (it must be 0, then specified by the interface)
+Find out if i need 2 configs and 3 interfaces or 1 config for all?
+
+FIX EP/EPIN number (if necassary when also changing the interface number)
+FIX interface and config indexes (remember interface number is relative to each config)
+
+
+Notes:
