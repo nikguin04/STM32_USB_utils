@@ -18,6 +18,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "usb_device.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -90,6 +91,9 @@ int main(void)
   MX_GPIO_Init();
   MX_USB_DEVICE_Init();
   /* USER CODE BEGIN 2 */
+
+  lcd_init();
+
   //USBD_Interface_fops_FS.Init();
   Keyboard_Report_Structure KR_example = {
 	  0b00000010, /* MODIFIER */ // LShift
@@ -102,6 +106,8 @@ int main(void)
 	  0,0,0,0,0,0
   };
   uint8_t GPIO_15_awaiting_release = 0;
+  char presstime_str[16+1] = "";
+  uint32_t start_presstime = 0;
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -111,19 +117,26 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	  if(HAL_GPIO_ReadPin (GPIOB, GPIO_PIN_14)) {
-		  printf("Button 1 (B14) pressed\r\n");
+	  if(HAL_GPIO_ReadPin (BTN_1_GPIO_Port, BTN_1_Pin)) {
+		  printf("Button 1 pressed\r\n");
 	  }
-	  if(HAL_GPIO_ReadPin (GPIOB, GPIO_PIN_15)) { // WARNING: This logic is faulty in the USB report cause of HAL_Delay on low clock speed (getting errors when delay is only at 10ms)
-		  printf("Button 1 (B15) pressed\r\n");
+	  if(HAL_GPIO_ReadPin (BTN_2_GPIO_Port, BTN_2_Pin)) { // WARNING: This logic is faulty in the USB report cause of HAL_Delay on low clock speed (getting errors when delay is only at 10ms)
+		  printf("Button 2 pressed\r\n");
+		  if (start_presstime == 0) { start_presstime = HAL_GetTick(); }
 		  GPIO_15_awaiting_release = 1;
+
 		  USBD_HID_SendReport(&hUsbDeviceFS, (uint8_t*) &KR_example, KEYBOARD_REPORT_LENGTH);
+		  sprintf(presstime_str, "Btn2 %8u ms", HAL_GetTick() - start_presstime);
+		  lcd_clear();
+		  lcd_put_str_at(presstime_str, 16, 0, 0);
+		  lcd_put_str_at("STM32 - 1602A", 13, 1, 0);
 	  } else if (GPIO_15_awaiting_release) { // Release all keys is GPIO 15 is let go of
 		  GPIO_15_awaiting_release = 0;
 		  USBD_HID_SendReport(&hUsbDeviceFS, (uint8_t*) &KR_releaseall, KEYBOARD_REPORT_LENGTH);
+		  start_presstime = 0;
 	  }
 
-	  HAL_Delay(20);
+	  HAL_Delay(100);
   }
   /* USER CODE END 3 */
 }
@@ -186,14 +199,34 @@ static void MX_GPIO_Init(void)
 
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOH_CLK_ENABLE();
-  __HAL_RCC_GPIOB_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
+  __HAL_RCC_GPIOB_CLK_ENABLE();
 
-  /*Configure GPIO pins : PB14 PB15 */
-  GPIO_InitStruct.Pin = GPIO_PIN_14|GPIO_PIN_15;
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOB, LCD_D4_Pin|LCD_D5_Pin|LCD_D6_Pin|LCD_D7_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOA, LCD_EN_Pin|LCD_RW_Pin|LCD_RS_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pins : BTN_1_Pin BTN_2_Pin */
+  GPIO_InitStruct.Pin = BTN_1_Pin|BTN_2_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : LCD_D4_Pin LCD_D5_Pin LCD_D6_Pin LCD_D7_Pin */
+  GPIO_InitStruct.Pin = LCD_D4_Pin|LCD_D5_Pin|LCD_D6_Pin|LCD_D7_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : LCD_EN_Pin LCD_RW_Pin LCD_RS_Pin */
+  GPIO_InitStruct.Pin = LCD_EN_Pin|LCD_RW_Pin|LCD_RS_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
 /* USER CODE BEGIN MX_GPIO_Init_2 */
 /* USER CODE END MX_GPIO_Init_2 */
