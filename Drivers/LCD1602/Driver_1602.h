@@ -8,22 +8,29 @@
 #ifndef LCD1602_DRIVER_1602_H_
 #define LCD1602_DRIVER_1602_H_
 
+#include <stdint.h>
+#include "main.h"
+
 void lcd_send_cmd (char cmd);
 void lcd_send_data (char data);
 void lcd_clear (void);
 void lcd_init (void);
 void lcd_put_str(char* buf, int len);
 void lcd_put_str_at(char* buf, int len, int row, int col);
+void lcd_put_custom_char(uint8_t* charbuffer, uint8_t cgram_ptr);
 
-#define SYSTICK_LOAD (SystemCoreClock/1000000U)
-#define SYSTICK_DELAY_CALIB (SYSTICK_LOAD >> 1)
 
-#define DELAY_US(us) \
-    do { \
-         uint32_t start = SysTick->VAL; \
-         uint32_t ticks = (us * SYSTICK_LOAD)-SYSTICK_DELAY_CALIB;  \
-         while((start - SysTick->VAL) < ticks); \
-    } while (0)
+static uint8_t customchar_binarycount[8] =
+{
+		0b00000001,
+		0b00000010,
+		0b00000011,
+		0b00000100,
+		0b00000101,
+		0b00000110,
+		0b00000111,
+		0b00001000,
+};
 
 
 #endif /* LCD1602_DRIVER_1602_H_ */

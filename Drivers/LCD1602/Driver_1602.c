@@ -8,7 +8,6 @@
 // Credit to https://controllerstech.com/interface-lcd-16x2-with-stm32-without-i2c/
 
 #include "Driver_1602.h"
-#include "main.h"
 
 /*#define timer htim1
 extern TIM_HandleTypeDef timer;
@@ -76,7 +75,7 @@ void lcd_put_cur(int row, int col)
 void lcd_put_str(char* buf, int len) {
 	for (int i = 0; i < len && buf[i] != NULL; i++) {
 		lcd_send_data(buf[i]);
-		DELAY_US(300);
+		DELAY_US(40); // Needs 37 nanoseconds to flush "write data to ram"
 	}
 }
 
@@ -86,6 +85,20 @@ void lcd_put_str_at(char* buf, int len, int row, int col) {
 	lcd_put_str(buf, len);
 }
 
+void lcd_put_custom_char(uint8_t* charbuffer, uint8_t cgram_ptr) {
+	// For the 5x? character setup, the 3 most significant bits for each uint8_t in charbuffer are ignored
+
+	cgram_ptr &= 0b00000111;
+
+	// Write new 0b000 CGRAM address
+	lcd_send_cmd(cgram_ptr | 0b01000000);
+	DELAY_US(40);
+	for (int i = 0; i < 8; i++) {
+		lcd_send_data(charbuffer[i]);
+		DELAY_US(40);
+	}
+
+}
 
 
 void lcd_clear (void) {

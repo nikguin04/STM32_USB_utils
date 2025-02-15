@@ -77,6 +77,17 @@ void Error_Handler(void);
 
 /* USER CODE BEGIN Private defines */
 
+// Timing for delaying in nanoseconds
+#define SYSTICK_LOAD (SystemCoreClock/1000000U)
+#define SYSTICK_DELAY_CALIB (SYSTICK_LOAD >> 1)
+
+#define DELAY_US(us) \
+    do { \
+         uint32_t start = SysTick->VAL; \
+         uint32_t ticks = (us * SYSTICK_LOAD)-SYSTICK_DELAY_CALIB;  \
+         while((start - SysTick->VAL) < ticks); \
+    } while (0)
+
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

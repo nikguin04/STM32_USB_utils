@@ -23,6 +23,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "usbd_hid.h"
+#include "Driver_1602.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -93,6 +94,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
   lcd_init();
+  lcd_put_custom_char(customchar_binarycount, 0b00000000);
 
   //USBD_Interface_fops_FS.Init();
   Keyboard_Report_Structure KR_example = {
@@ -130,6 +132,7 @@ int main(void)
 		  lcd_clear();
 		  lcd_put_str_at(presstime_str, 16, 0, 0);
 		  lcd_put_str_at("STM32 - 1602A", 13, 1, 0);
+		  lcd_send_data(0b000); // Write our custom char
 	  } else if (GPIO_15_awaiting_release) { // Release all keys is GPIO 15 is let go of
 		  GPIO_15_awaiting_release = 0;
 		  USBD_HID_SendReport(&hUsbDeviceFS, (uint8_t*) &KR_releaseall, KEYBOARD_REPORT_LENGTH);
