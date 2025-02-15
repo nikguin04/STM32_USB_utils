@@ -26,6 +26,7 @@
 #include "usbd_hid.h"
 #include "usbd_cdc.h"
 #include "usbd_cdc_if.h"
+#include "usbd_multi.h"
 
 /* USER CODE BEGIN Includes */
 
@@ -73,13 +74,8 @@ void MX_USB_DEVICE_Init(void)
   {
     Error_Handler();
   }
-  // HID
-  if (USBD_RegisterClass(&hUsbDeviceFS, &USBD_HID) != USBD_OK)
-  {
-    Error_Handler();
-  }
   // CDC
-  if (USBD_RegisterClass(&hUsbDeviceFS, &USBD_CDC) != USBD_OK)
+  if (USBD_RegisterClass(&hUsbDeviceFS, &USBD_MULTI) != USBD_OK)
   {
     Error_Handler();
   }

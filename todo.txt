@@ -5,4 +5,6 @@ FIX EP/EPIN number (if necassary when also changing the interface number)
 FIX interface and config indexes (remember interface number is relative to each config)
 
 
+Need to defines things properly for HID, current CDC is recognized with just descriptor but HID is not
+
 Notes:
