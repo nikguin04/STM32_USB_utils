@@ -72,15 +72,33 @@ static uint8_t USBD_MULTI_DeviceQualifierDesc[USB_LEN_DEV_QUALIFIER_DESC] =
 };
 
 
-uint8_t USBD_MULTI_CfgDesc[USB_CDC_CONFIG_DESC_SIZ + USB_HID_CONFIG_DESC_SIZ];
+uint8_t USBD_MULTI_CfgDesc[USBD_MULTI_CfgDesc_BaseLength + USB_CDC_CONFIG_DESC_SIZ + USB_HID_CONFIG_DESC_SIZ] =
+{
+	0x09,                              /* bLength: Configuration Descriptor size */
+	USB_DESC_TYPE_CONFIGURATION,       /* bDescriptorType: Configuration */
+	0x00,                              /* wTotalLength: Bytes returned (placeholder) */
+	0x00,
+	0x03,                              /* bNumInterfaces: 3 interfaces */
+	0x01,                              /* bConfigurationValue: Configuration value */
+	0x00,                              /* iConfiguration: Index of string descriptor
+										describing the configuration */
+	#if (USBD_SELF_POWERED == 1U)
+		0xE0,                          /* bmAttributes: Bus Powered according to user configuration */
+	#else
+		0xA0,                          /* bmAttributes: Bus Powered according to user configuration */
+	#endif /* USBD_SELF_POWERED */
+		USBD_MAX_POWER,                /* MaxPower (mA) */
+};
 
-uint16_t cfgIndex = 0;
+uint16_t cfgIndex = USBD_MULTI_CfgDesc_BaseLength;
 static void initCfgDesc() {
 	uint16_t dummy_len = 0;
 	memcpy(USBD_MULTI_CfgDesc + cfgIndex, USBD_CDC.GetFSConfigDescriptor(&dummy_len), USB_CDC_CONFIG_DESC_SIZ);
 	cfgIndex = cfgIndex + USB_CDC_CONFIG_DESC_SIZ;
 	memcpy(USBD_MULTI_CfgDesc + cfgIndex, USBD_HID.GetFSConfigDescriptor(&dummy_len), USB_HID_CONFIG_DESC_SIZ);
 	cfgIndex = cfgIndex + USB_HID_CONFIG_DESC_SIZ;
+
+	USBD_MULTI_CfgDesc[2] = cfgIndex;// edit length from index
 }
 
 

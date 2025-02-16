@@ -45,7 +45,7 @@ extern "C" {
 #endif /* HID_EPIN_ADDR */
 #define HID_EPIN_SIZE                              0x04U
 
-#define USB_HID_CONFIG_DESC_SIZ                    34U
+#define USB_HID_CONFIG_DESC_SIZ                    25U
 #define USB_HID_DESC_SIZ                           9U
 #define HID_MOUSE_REPORT_DESC_SIZE                 74U
 

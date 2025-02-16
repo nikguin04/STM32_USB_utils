@@ -134,26 +134,11 @@ USBD_ClassTypeDef USBD_HID =
 /* USB HID device FS Configuration Descriptor */
 __ALIGN_BEGIN static uint8_t USBD_HID_CfgDesc[USB_HID_CONFIG_DESC_SIZ] __ALIGN_END =
 {
-  0x09,                                               /* bLength: Configuration Descriptor size */
-  USB_DESC_TYPE_CONFIGURATION,                        /* bDescriptorType: Configuration */
-  USB_HID_CONFIG_DESC_SIZ,                            /* wTotalLength: Bytes returned */
-  0x00,
-  0x01,                                               /* bNumInterfaces: 1 interface */
-  0x01,                                               /* bConfigurationValue: Configuration value */
-  0x00,                                               /* iConfiguration: Index of string descriptor
-                                                         describing the configuration */
-#if (USBD_SELF_POWERED == 1U)
-  0xE0,                                               /* bmAttributes: Bus Powered according to user configuration */
-#else
-  0xA0,                                               /* bmAttributes: Bus Powered according to user configuration */
-#endif /* USBD_SELF_POWERED */
-  USBD_MAX_POWER,                                     /* MaxPower (mA) */
-
   /************** Descriptor of Joystick Mouse interface ****************/
   /* 09 */
   0x09,                                               /* bLength: Interface Descriptor size */
   USB_DESC_TYPE_INTERFACE,                            /* bDescriptorType: Interface descriptor type */
-  0x00,                                               /* bInterfaceNumber: Number of Interface */
+  0x02,                                               /* bInterfaceNumber: Number of Interface */
   0x00,                                               /* bAlternateSetting: Alternate setting */
   0x01,                                               /* bNumEndpoints */
   0x03,                                               /* bInterfaceClass: HID */
