@@ -26,12 +26,12 @@ uint8_t *USBD_MULTI_GetDeviceQualifierDescriptor(uint16_t *length);
 USBD_ClassTypeDef  USBD_MULTI =
 {
   USBD_MULTI_Init,
-  NULL,//USBD_MULTI_DeInit,
-  NULL,//USBD_MULTI_Setup,
+  USBD_MULTI_DeInit,
+  USBD_MULTI_Setup,
   NULL,                 // EP0_TxSent
-  NULL,//USBD_MULTI_EP0_RxReady,
-  NULL,//USBD_MULTI_DataIn,
-  NULL,//USBD_MULTI_DataOut,
+  USBD_MULTI_EP0_RxReady,
+  USBD_MULTI_DataIn,
+  USBD_MULTI_DataOut,
   NULL,
   NULL,
   NULL,
@@ -54,8 +54,43 @@ static uint8_t USBD_MULTI_Init(USBD_HandleTypeDef *pdev, uint8_t cfgidx)
   USBD_CDC.Init(pdev, cfgidx);
   pdev->classId = USB_HID_CLASSID; // HID INIT
   USBD_HID.Init(pdev, cfgidx);
-
+  return USBD_OK;
 }
+static uint8_t USBD_MULTI_DeInit(USBD_HandleTypeDef *pdev, uint8_t cfgidx) {
+	return 0;
+}
+static uint8_t USBD_MULTI_Setup(USBD_HandleTypeDef *pdev, USBD_SetupReqTypedef *req) {
+	pdev->classId = USB_CDC_CLASSID; // CDC INIT
+	USBD_CDC.Setup(pdev, req);
+	pdev->classId = USB_HID_CLASSID; // HID INIT
+	USBD_HID.Setup(pdev, req);
+	return USBD_OK;
+}
+static uint8_t USBD_MULTI_DataIn(USBD_HandleTypeDef *pdev, uint8_t epnum) {
+	// Poorly hardcoded stub
+	if (epnum == HID_EPIN_ADDR) {
+		pdev->classId = USB_HID_CLASSID;
+		USBD_HID.DataIn(pdev, epnum);
+	} else {
+		pdev->classId = USB_CDC_CLASSID;
+		USBD_CDC.DataIn(pdev, epnum);
+	}
+
+	return USBD_OK;
+}
+static uint8_t USBD_MULTI_DataOut(USBD_HandleTypeDef *pdev, uint8_t epnum) {
+	// No data out for HID, so again, poorly hardcoded
+	pdev->classId = USB_CDC_CLASSID;
+	USBD_CDC.DataOut(pdev, epnum);
+	return USBD_OK;
+}
+static uint8_t USBD_MULTI_EP0_RxReady(USBD_HandleTypeDef *pdev) {
+	// No data out for HID, so again, poorly hardcoded
+	pdev->classId = USB_CDC_CLASSID;
+	USBD_CDC.EP0_RxReady(pdev);
+	return USBD_OK;
+}
+
 
 static uint8_t USBD_MULTI_DeviceQualifierDesc[USB_LEN_DEV_QUALIFIER_DESC] =
 {
