@@ -136,8 +136,9 @@ uint8_t USBD_MULTI_CfgDesc[USBD_MULTI_CfgDesc_BaseLength + USB_CDC_CONFIG_DESC_S
 		USBD_MAX_POWER,                /* MaxPower (mA) */
 };
 
-uint16_t cfgIndex = USBD_MULTI_CfgDesc_BaseLength;
+uint16_t cfgIndex = 0;
 static void initCfgDesc() {
+	cfgIndex = USBD_MULTI_CfgDesc_BaseLength;
 	uint16_t dummy_len = 0;
 	memcpy(USBD_MULTI_CfgDesc + cfgIndex, USBD_CDC.GetFSConfigDescriptor(&dummy_len), USB_CDC_CONFIG_DESC_SIZ);
 	cfgIndex = cfgIndex + USB_CDC_CONFIG_DESC_SIZ;
@@ -175,8 +176,8 @@ static uint8_t *USBD_MULTI_GetHSCfgDesc(uint16_t *length)
 {
   initCfgDesc();
   uint16_t dummy_len = 0;
-  USBD_CDC.GetFSConfigDescriptor(&dummy_len);
-  USBD_HID.GetFSConfigDescriptor(&dummy_len);
+  USBD_CDC.GetHSConfigDescriptor(&dummy_len);
+  USBD_HID.GetHSConfigDescriptor(&dummy_len);
 
   *length = cfgIndex;
   return USBD_MULTI_CfgDesc;
@@ -192,8 +193,8 @@ static uint8_t *USBD_MULTI_GetOtherSpeedCfgDesc(uint16_t *length)
 {
   initCfgDesc();
   uint16_t dummy_len = 0;
-  USBD_CDC.GetFSConfigDescriptor(&dummy_len);
-  USBD_HID.GetFSConfigDescriptor(&dummy_len);
+  USBD_CDC.GetOtherSpeedConfigDescriptor(&dummy_len);
+  USBD_HID.GetOtherSpeedConfigDescriptor(&dummy_len);
 
   *length = cfgIndex;
   return USBD_MULTI_CfgDesc;
