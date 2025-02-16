@@ -50,14 +50,25 @@ USBD_ClassTypeDef  USBD_MULTI =
 
 static uint8_t USBD_MULTI_Init(USBD_HandleTypeDef *pdev, uint8_t cfgidx)
 {
-  pdev->classId = USB_CDC_CLASSID; // CDC INIT
-  USBD_CDC.Init(pdev, cfgidx);
   pdev->classId = USB_HID_CLASSID; // HID INIT
   USBD_HID.Init(pdev, cfgidx);
+  pdev->classId = USB_CDC_CLASSID; // CDC INIT
+  USBD_CDC.Init(pdev, cfgidx);
+
+  uint32_t *hhid;
+  hhid = (uint32_t *)USBD_malloc_MULTI(sizeof(uint32_t));
+  pdev->pClassDataCmsit[pdev->classId] = (void *)hhid;
+  pdev->pClassData = pdev->pClassDataCmsit[pdev->classId];
+  *hhid = 1;
+
   return USBD_OK;
 }
 static uint8_t USBD_MULTI_DeInit(USBD_HandleTypeDef *pdev, uint8_t cfgidx) {
-	return 0;
+	pdev->classId = USB_CDC_CLASSID; // CDC DEINIT
+	USBD_CDC.DeInit(pdev, cfgidx);
+	pdev->classId = USB_HID_CLASSID; // HID DEINIT
+	USBD_HID.DeInit(pdev, cfgidx);
+	return USBD_OK;
 }
 static uint8_t USBD_MULTI_Setup(USBD_HandleTypeDef *pdev, USBD_SetupReqTypedef *req) {
 	pdev->classId = USB_CDC_CLASSID; // CDC INIT

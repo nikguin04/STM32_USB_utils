@@ -7,4 +7,7 @@ FIX interface and config indexes (remember interface number is relative to each 
 
 Need to defines things properly for HID, current CDC is recognized with just descriptor but HID is not
 
+Fix pdev->pClassData in HID and CDC to use Cmsit
+
+
 Notes:

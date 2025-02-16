@@ -615,6 +615,12 @@ USBD_StatusTypeDef USBD_LL_SetTestMode(USBD_HandleTypeDef *pdev, uint8_t testmod
   * @param  size: Size of allocated memory
   * @retval None
   */
+void *USBD_static_malloc_MULTI(uint32_t size)
+{
+  static uint32_t mem[(sizeof(uint32_t)/4)+1];/* On 32-bit boundary */
+  return mem;
+}
+
 void *USBD_static_malloc_HID(uint32_t size)
 {
   static uint32_t mem[(sizeof(USBD_HID_HandleTypeDef)/4)+1];/* On 32-bit boundary */

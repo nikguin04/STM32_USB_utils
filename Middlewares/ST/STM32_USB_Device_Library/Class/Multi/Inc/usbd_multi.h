@@ -12,8 +12,8 @@
 #include "usbd_cdc.h"
 #include "usbd_hid.h"
 
-#define USB_CDC_CLASSID 0
-#define USB_HID_CLASSID 1
+#define USB_CDC_CLASSID 1
+#define USB_HID_CLASSID 2
 
 #define USBD_MULTI_CfgDesc_BaseLength 9U
 

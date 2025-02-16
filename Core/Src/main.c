@@ -112,7 +112,7 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	  if(HAL_GPIO_ReadPin (GPIOB, GPIO_PIN_14)) {
+	  /*if(HAL_GPIO_ReadPin (GPIOB, GPIO_PIN_14)) {
 		  printf("Button 1 (B14) pressed\r\n");
 	  }
 	  if(HAL_GPIO_ReadPin (GPIOB, GPIO_PIN_15)) { // WARNING: This logic is faulty in the USB report cause of HAL_Delay on low clock speed (getting errors when delay is only at 10ms)
@@ -122,7 +122,7 @@ int main(void)
 	  } else if (GPIO_15_awaiting_release) { // Release all keys is GPIO 15 is let go of
 		  GPIO_15_awaiting_release = 0;
 		  USBD_HID_SendReport(&hUsbDeviceFS, (uint8_t*) &KR_releaseall, KEYBOARD_REPORT_LENGTH);
-	  }
+	  }*/
 
 	  HAL_Delay(20);
   }

@@ -93,6 +93,7 @@
 /* Memory management macros make sure to use static memory allocation */
 /** Alias for memory allocation. */
 
+#define USBD_malloc_MULTI         (void *)USBD_static_malloc_MULTI
 #define USBD_malloc_HID         (void *)USBD_static_malloc_HID
 #define USBD_malloc_CDC         (void *)USBD_static_malloc_CDC
 
