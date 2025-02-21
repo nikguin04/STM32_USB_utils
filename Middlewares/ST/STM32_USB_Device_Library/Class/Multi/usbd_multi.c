@@ -51,14 +51,14 @@ static uint8_t USBD_MULTI_DeviceQualifierDesc[USB_LEN_DEV_QUALIFIER_DESC] =
 {
   USB_LEN_DEV_QUALIFIER_DESC,
   USB_DESC_TYPE_DEVICE_QUALIFIER,
-  0x00,
+  0x00, // bcdUSB
   0x02,
-  0x00,
-  0x00,
-  0x00,
-  0x40,
-  0x01,
-  0x00,
+  0x00, // Device class
+  0x00, // Device subclass
+  0x00, // Device protocol
+  0x40, // Packet size
+  0x01, // Num of configs
+  0x00, // Reserved
 };
 
 __ALIGN_BEGIN static uint8_t USBD_MULTI_CfgDesc[USB_MULTI_CONFIG_DESC_SIZ] __ALIGN_END =
@@ -66,9 +66,9 @@ __ALIGN_BEGIN static uint8_t USBD_MULTI_CfgDesc[USB_MULTI_CONFIG_DESC_SIZ] __ALI
   /* Configuration Descriptor */
   0x09,                                       /* bLength: Configuration Descriptor size */
   USB_DESC_TYPE_CONFIGURATION,                /* bDescriptorType: Configuration */
-  USB_CDC_CONFIG_DESC_SIZ,                    /* wTotalLength */
+  USB_MULTI_CONFIG_DESC_SIZ,                  /* wTotalLength */
   0x00,
-  0x02,                                       /* bNumInterfaces: 2 interfaces */
+  0x03,                                       /* bNumInterfaces: 2 interfaces */
   0x01,                                       /* bConfigurationValue: Configuration value */
   0x00,                                       /* iConfiguration: Index of string descriptor
                                                  describing the configuration */
@@ -81,11 +81,22 @@ __ALIGN_BEGIN static uint8_t USBD_MULTI_CfgDesc[USB_MULTI_CONFIG_DESC_SIZ] __ALI
 
   /*---------------------------------------------------------------------------*/
 
+  // Interface association descriptor
+  0x08,
+  0x0B,
+  0x01,
+  0x02,
+  0x0A,                                       /* bInterfaceClass: CDC */
+  0x00,                                       /* bInterfaceSubClass */
+  0x00,                                       /* bInterfaceProtocol */
+  0x00,
+
+
   /* Interface Descriptor */
   0x09,                                       /* bLength: Interface Descriptor size */
   USB_DESC_TYPE_INTERFACE,                    /* bDescriptorType: Interface */
   /* Interface descriptor type */
-  0x00,                                       /* bInterfaceNumber: Number of Interface */
+  0x01,                                       /* bInterfaceNumber: Number of Interface */
   0x00,                                       /* bAlternateSetting: Alternate setting */
   0x01,                                       /* bNumEndpoints: One endpoint used */
   0x02,                                       /* bInterfaceClass: Communication Interface Class */
@@ -133,7 +144,7 @@ __ALIGN_BEGIN static uint8_t USBD_MULTI_CfgDesc[USB_MULTI_CONFIG_DESC_SIZ] __ALI
   /* Data class interface descriptor */
   0x09,                                       /* bLength: Endpoint Descriptor size */
   USB_DESC_TYPE_INTERFACE,                    /* bDescriptorType: */
-  0x01,                                       /* bInterfaceNumber: Number of Interface */
+  0x02,                                       /* bInterfaceNumber: Number of Interface */
   0x00,                                       /* bAlternateSetting: Alternate setting */
   0x02,                                       /* bNumEndpoints: Two endpoints used */
   0x0A,                                       /* bInterfaceClass: CDC */
@@ -171,7 +182,7 @@ __ALIGN_BEGIN static uint8_t USBD_MULTI_CfgDesc[USB_MULTI_CONFIG_DESC_SIZ] __ALI
   0x03,                                               /* bInterfaceClass: HID */
   0x01,                                               /* bInterfaceSubClass : 1=BOOT, 0=no boot */
   0x01,                                               /* nInterfaceProtocol : 0=none, 1=keyboard, 2=mouse */
-  0,                                                  /* iInterface: Index of string descriptor */
+  0x00,                                               /* iInterface: Index of string descriptor */
   /******************** Descriptor of Joystick Mouse HID ********************/
   /* 18 */
   0x09,                                               /* bLength: HID Descriptor size */
@@ -194,6 +205,8 @@ __ALIGN_BEGIN static uint8_t USBD_MULTI_CfgDesc[USB_MULTI_CONFIG_DESC_SIZ] __ALI
   0x00,
   HID_FS_BINTERVAL,                                   /* bInterval: Polling Interval */
   /* 34 */
+
+
 };
 
 

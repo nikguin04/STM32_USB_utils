@@ -13,7 +13,7 @@
 #include "usbd_hid.h"
 #include "usbd_cdc.h"
 
-#define USB_MULTI_CONFIG_DESC_SIZ (67U+25U)
+#define USB_MULTI_CONFIG_DESC_SIZ (67U+34U-9U+8U)
 
 extern USBD_ClassTypeDef USBD_MULTI;
 #define USBD_MULTI_CLASS &USBD_MULTI;
