@@ -86,9 +86,9 @@ __ALIGN_BEGIN static uint8_t USBD_MULTI_CfgDesc[USB_MULTI_CONFIG_DESC_SIZ] __ALI
   0x0B,
   0x01,
   0x02,
-  0x0A,                                       /* bInterfaceClass: CDC */
-  0x00,                                       /* bInterfaceSubClass */
-  0x00,                                       /* bInterfaceProtocol */
+  0x02,                                       /* bInterfaceClass: CDC */
+  0x02,                                       /* bInterfaceSubClass */
+  0x01,                                       /* bInterfaceProtocol */
   0x00,
 
 
