@@ -24,9 +24,9 @@ uint8_t *USBD_MULTI_GetDeviceQualifierDescriptor(uint16_t *length);
 
 USBD_ClassTypeDef  USBD_MULTI =
 {
-  USBD_MULTI_Init, //USBD_CDC_Init,
-  USBD_MULTI_DeInit, //USBD_CDC_DeInit,
-  NULL, //USBD_CDC_Setup,
+  USBD_MULTI_Init,
+  USBD_MULTI_DeInit,
+  USBD_MULTI_Setup,
   NULL,                 /* EP0_TxSent */
   NULL, //USBD_CDC_EP0_RxReady,
   NULL, //USBD_CDC_DataIn,
@@ -287,6 +287,17 @@ static uint8_t *USBD_MULTI_GetFSCfgDesc(uint16_t *length)
 
   *length = (uint16_t)sizeof(USBD_MULTI_CfgDesc);
   return USBD_MULTI_CfgDesc;
+}
+
+static uint8_t USBD_MULTI_Setup(USBD_HandleTypeDef *pdev, USBD_SetupReqTypedef *req) {
+
+	// Please note that this might require passing based on interfaces and endpoints in bmRequestType (see 9.3 USB Device Requests of "Universal Serial Bus Specification Revision 1.1")
+	pdev->classId = HID_CLASSID;
+	USBD_HID.Setup(pdev, req);
+
+	pdev->classId = CDC_CLASSID;
+	USBD_CDC.Setup(pdev, req);
+	return USBD_OK;
 }
 
 static uint8_t *USBD_MULTI_GetHSCfgDesc(uint16_t *length)
