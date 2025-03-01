@@ -24,6 +24,7 @@
 /* USER CODE BEGIN Includes */
 #include "usbd_hid.h"
 #include "Driver_1602.h"
+#include "stdbool.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -123,7 +124,7 @@ int main(void)
 	  if(HAL_GPIO_ReadPin (BTN_1_GPIO_Port, BTN_1_Pin)) {
 		  printf("Button 1 pressed\r\n");
 	  }
-	  if(HAL_GPIO_ReadPin (BTN_2_GPIO_Port, BTN_2_Pin)) { // WARNING: This logic is faulty in the USB report cause of HAL_Delay on low clock speed (getting errors when delay is only at 10ms)
+	  if(HAL_GPIO_ReadPin (BTN_2_GPIO_Port, BTN_2_Pin) || true) { // WARNING: This logic is faulty in the USB report cause of HAL_Delay on low clock speed (getting errors when delay is only at 10ms)
 		  printf("Button 2 pressed\r\n");
 		  if (start_presstime == 0) { start_presstime = HAL_GetTick(); }
 		  GPIO_15_awaiting_release = 1;

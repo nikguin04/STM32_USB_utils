@@ -12,11 +12,14 @@
 
 #include "usbd_hid.h"
 #include "usbd_cdc.h"
+#include "usbd_cdc_if.h"
 
 #define USB_MULTI_CONFIG_DESC_SIZ (67U+34U-9U+8U)
 
 extern USBD_ClassTypeDef USBD_MULTI;
 #define USBD_MULTI_CLASS &USBD_MULTI;
+
+#define MULTI_CLASSID 0x00
 
 
 typedef struct

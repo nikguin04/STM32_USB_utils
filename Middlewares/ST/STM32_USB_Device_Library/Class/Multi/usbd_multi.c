@@ -24,8 +24,8 @@ uint8_t *USBD_MULTI_GetDeviceQualifierDescriptor(uint16_t *length);
 
 USBD_ClassTypeDef  USBD_MULTI =
 {
-  NULL, //USBD_CDC_Init,
-  NULL, //USBD_CDC_DeInit,
+  USBD_MULTI_Init, //USBD_CDC_Init,
+  USBD_MULTI_DeInit, //USBD_CDC_DeInit,
   NULL, //USBD_CDC_Setup,
   NULL,                 /* EP0_TxSent */
   NULL, //USBD_CDC_EP0_RxReady,
@@ -216,9 +216,14 @@ static uint8_t USBD_MULTI_Init(USBD_HandleTypeDef *pdev, uint8_t cfgidx) {
 	USBD_HID.Init(pdev, cfgidx);
 
 	pdev->classId = CDC_CLASSID;
+	if (USBD_CDC_RegisterInterface(pdev, &USBD_Interface_fops_FS) != USBD_OK) {
+	  Error_Handler();
+	}
 	USBD_CDC.Init(pdev, cfgidx);
 
 
+	pdev->classId = MULTI_CLASSID;
+	USBD_MULTI_HandleTypeDef *h_multi;
 	h_multi = (USBD_MULTI_HandleTypeDef *)USBD_malloc_CDC(sizeof(USBD_MULTI_HandleTypeDef));
 	if (h_multi == NULL)
 	{
@@ -230,6 +235,24 @@ static uint8_t USBD_MULTI_Init(USBD_HandleTypeDef *pdev, uint8_t cfgidx) {
 	pdev->pClassDataCmsit[pdev->classId] = (void *)h_multi;
 	pdev->pClassData = pdev->pClassDataCmsit[pdev->classId];
 
+}
+
+static uint8_t USBD_MULTI_DeInit(USBD_HandleTypeDef *pdev, uint8_t cfgidx) {
+
+	pdev->classId = HID_CLASSID;
+	USBD_HID.DeInit(pdev, cfgidx);
+
+	pdev->classId = CDC_CLASSID;
+	USBD_CDC.DeInit(pdev, cfgidx);
+
+	pdev->classId = MULTI_CLASSID;
+	if (pdev->pClassDataCmsit[pdev->classId] != NULL)
+	{
+		(void)USBD_free(pdev->pClassDataCmsit[pdev->classId]);
+		pdev->pClassDataCmsit[pdev->classId] = NULL;
+	}
+
+	return (uint8_t)USBD_OK;
 }
 
 

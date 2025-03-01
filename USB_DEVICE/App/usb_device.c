@@ -74,9 +74,9 @@ void MX_USB_DEVICE_Init(void)
     Error_Handler();
   }
   if (USBD_RegisterClass(&hUsbDeviceFS, &USBD_MULTI) != USBD_OK)
-    {
-      Error_Handler();
-    }
+  {
+	Error_Handler();
+  }
   // HID
   /*if (USBD_RegisterClass(&hUsbDeviceFS, &USBD_HID) != USBD_OK)
   {
