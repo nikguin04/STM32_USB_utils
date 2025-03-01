@@ -95,6 +95,7 @@
 
 #define USBD_malloc_HID         (void *)USBD_static_malloc_HID
 #define USBD_malloc_CDC         (void *)USBD_static_malloc_CDC
+#define USBD_malloc_MULTI		(void *)USBD_static_malloc_MULTI
 
 /** Alias for memory release. */
 #define USBD_free           USBD_static_free

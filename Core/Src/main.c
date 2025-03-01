@@ -129,7 +129,7 @@ int main(void)
 		  if (start_presstime == 0) { start_presstime = HAL_GetTick(); }
 		  GPIO_15_awaiting_release = 1;
 
-		  USBD_HID_SendReport(&hUsbDeviceFS, (uint8_t*) &KR_example, KEYBOARD_REPORT_LENGTH);
+		  //USBD_HID_SendReport(&hUsbDeviceFS, (uint8_t*) &KR_example, KEYBOARD_REPORT_LENGTH);
 		  sprintf(presstime_str, "Btn2 %8u ms", HAL_GetTick() - start_presstime);
 		  lcd_clear();
 		  lcd_put_str_at(presstime_str, 16, 0, 0);
@@ -137,7 +137,7 @@ int main(void)
 		  lcd_send_data(0b000); // Write our custom char
 	  } else if (GPIO_15_awaiting_release) { // Release all keys is GPIO 15 is let go of
 		  GPIO_15_awaiting_release = 0;
-		  USBD_HID_SendReport(&hUsbDeviceFS, (uint8_t*) &KR_releaseall, KEYBOARD_REPORT_LENGTH);
+		  //USBD_HID_SendReport(&hUsbDeviceFS, (uint8_t*) &KR_releaseall, KEYBOARD_REPORT_LENGTH);
 		  start_presstime = 0;
 	  }
 

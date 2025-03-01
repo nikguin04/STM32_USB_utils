@@ -26,6 +26,7 @@
 
 #include "usbd_hid.h"
 #include "usbd_cdc.h"
+#include "usbd_multi.h"
 
 /* USER CODE BEGIN Includes */
 
@@ -624,6 +625,12 @@ void *USBD_static_malloc_HID(uint32_t size)
 void *USBD_static_malloc_CDC(uint32_t size)
 {
   static uint32_t mem[(sizeof(USBD_CDC_HandleTypeDef)/4)+1];/* On 32-bit boundary */
+  return mem;
+}
+
+void *USBD_static_malloc_MULTI(uint32_t size)
+{
+  static uint32_t mem[(sizeof(USBD_MULTI_HandleTypeDef)/4)+1];/* On 32-bit boundary */
   return mem;
 }
 

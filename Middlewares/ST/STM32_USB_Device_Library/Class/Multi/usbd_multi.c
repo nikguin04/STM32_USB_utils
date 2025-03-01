@@ -224,13 +224,14 @@ static uint8_t USBD_MULTI_Init(USBD_HandleTypeDef *pdev, uint8_t cfgidx) {
 
 	pdev->classId = MULTI_CLASSID;
 	USBD_MULTI_HandleTypeDef *h_multi;
-	h_multi = (USBD_MULTI_HandleTypeDef *)USBD_malloc_CDC(sizeof(USBD_MULTI_HandleTypeDef));
+	h_multi = (USBD_MULTI_HandleTypeDef *)USBD_malloc_MULTI(sizeof(USBD_MULTI_HandleTypeDef));
 	if (h_multi == NULL)
 	{
 		pdev->pClassDataCmsit[pdev->classId] = NULL;
 		return (uint8_t)USBD_EMEM;
 	}
 	(void)USBD_memset(h_multi, 0, sizeof(USBD_MULTI_HandleTypeDef));
+
 
 	pdev->pClassDataCmsit[pdev->classId] = (void *)h_multi;
 	//pdev->pClassData = pdev->pClassDataCmsit[pdev->classId];
@@ -290,12 +291,15 @@ static uint8_t USBD_MULTI_Setup(USBD_HandleTypeDef *pdev, USBD_SetupReqTypedef *
 }
 
 static uint8_t USBD_MULTI_DataIn(USBD_HandleTypeDef *pdev, uint8_t epnum) {
-	switch (epnum) {
+	int i = 0;
+	i++;
+	switch (epnum+0x80) {
 		case CDC_IN_EP:
-			return USBD_CDC.DataIn(pdev, epnum);
 		case CDC_CMD_EP:
+			pdev->classId = CDC_CLASSID;
 			return USBD_CDC.DataIn(pdev, epnum);
 		case HID_EPIN_ADDR:
+			pdev->classId = HID_CLASSID;
 			return USBD_HID.DataIn(pdev, epnum);
 
 		default:
@@ -306,6 +310,7 @@ static uint8_t USBD_MULTI_DataIn(USBD_HandleTypeDef *pdev, uint8_t epnum) {
 static uint8_t USBD_MULTI_DataOut(USBD_HandleTypeDef *pdev, uint8_t epnum) {
 	switch (epnum) {
 			case CDC_OUT_EP:
+				pdev->classId = CDC_CLASSID;
 				return USBD_CDC.DataOut(pdev, epnum);
 			default:
 				return USBD_FAIL;
