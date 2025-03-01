@@ -233,8 +233,8 @@ static uint8_t USBD_MULTI_Init(USBD_HandleTypeDef *pdev, uint8_t cfgidx) {
 	(void)USBD_memset(h_multi, 0, sizeof(USBD_MULTI_HandleTypeDef));
 
 	pdev->pClassDataCmsit[pdev->classId] = (void *)h_multi;
-	pdev->pClassData = pdev->pClassDataCmsit[pdev->classId];
-
+	//pdev->pClassData = pdev->pClassDataCmsit[pdev->classId];
+	return (uint8_t)USBD_OK;
 }
 
 static uint8_t USBD_MULTI_DeInit(USBD_HandleTypeDef *pdev, uint8_t cfgidx) {
