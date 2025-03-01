@@ -56,8 +56,37 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define BTN_1_Pin GPIO_PIN_1
+#define BTN_1_GPIO_Port GPIOA
+#define BTN_2_Pin GPIO_PIN_2
+#define BTN_2_GPIO_Port GPIOA
+#define LCD_D4_Pin GPIO_PIN_12
+#define LCD_D4_GPIO_Port GPIOB
+#define LCD_D5_Pin GPIO_PIN_13
+#define LCD_D5_GPIO_Port GPIOB
+#define LCD_D6_Pin GPIO_PIN_14
+#define LCD_D6_GPIO_Port GPIOB
+#define LCD_D7_Pin GPIO_PIN_15
+#define LCD_D7_GPIO_Port GPIOB
+#define LCD_EN_Pin GPIO_PIN_8
+#define LCD_EN_GPIO_Port GPIOA
+#define LCD_RW_Pin GPIO_PIN_9
+#define LCD_RW_GPIO_Port GPIOA
+#define LCD_RS_Pin GPIO_PIN_10
+#define LCD_RS_GPIO_Port GPIOA
 
 /* USER CODE BEGIN Private defines */
+
+// Timing for delaying in nanoseconds
+#define SYSTICK_LOAD (SystemCoreClock/1000000U)
+#define SYSTICK_DELAY_CALIB (SYSTICK_LOAD >> 1)
+
+#define DELAY_US(us) \
+    do { \
+         uint32_t start = SysTick->VAL; \
+         uint32_t ticks = (us * SYSTICK_LOAD)-SYSTICK_DELAY_CALIB;  \
+         while((start - SysTick->VAL) < ticks); \
+    } while (0)
 
 /* USER CODE END Private defines */
 
