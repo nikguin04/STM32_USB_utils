@@ -96,7 +96,7 @@ __ALIGN_BEGIN static uint8_t USBD_MULTI_CfgDesc[USB_MULTI_CONFIG_DESC_SIZ] __ALI
   0x09,                                       /* bLength: Interface Descriptor size */
   USB_DESC_TYPE_INTERFACE,                    /* bDescriptorType: Interface */
   /* Interface descriptor type */
-  0x01,                                       /* bInterfaceNumber: Number of Interface */
+  CDC_CIC_INTERFACE,                              /* bInterfaceNumber: Number of Interface */
   0x00,                                       /* bAlternateSetting: Alternate setting */
   0x01,                                       /* bNumEndpoints: One endpoint used */
   0x02,                                       /* bInterfaceClass: Communication Interface Class */
@@ -144,7 +144,7 @@ __ALIGN_BEGIN static uint8_t USBD_MULTI_CfgDesc[USB_MULTI_CONFIG_DESC_SIZ] __ALI
   /* Data class interface descriptor */
   0x09,                                       /* bLength: Endpoint Descriptor size */
   USB_DESC_TYPE_INTERFACE,                    /* bDescriptorType: */
-  0x02,                                       /* bInterfaceNumber: Number of Interface */
+  CDC_INTERFACE,                                       /* bInterfaceNumber: Number of Interface */
   0x00,                                       /* bAlternateSetting: Alternate setting */
   0x02,                                       /* bNumEndpoints: Two endpoints used */
   0x0A,                                       /* bInterfaceClass: CDC */
@@ -176,7 +176,7 @@ __ALIGN_BEGIN static uint8_t USBD_MULTI_CfgDesc[USB_MULTI_CONFIG_DESC_SIZ] __ALI
   /* 09 */
   0x09,                                               /* bLength: Interface Descriptor size */
   USB_DESC_TYPE_INTERFACE,                            /* bDescriptorType: Interface descriptor type */
-  0x00,                                               /* bInterfaceNumber: Number of Interface */
+  HID_INTERFACE,                                      /* bInterfaceNumber: Number of Interface */
   0x00,                                               /* bAlternateSetting: Alternate setting */
   0x01,                                               /* bNumEndpoints */
   0x03,                                               /* bInterfaceClass: HID */
@@ -256,14 +256,37 @@ static uint8_t USBD_MULTI_DeInit(USBD_HandleTypeDef *pdev, uint8_t cfgidx) {
 }
 
 static uint8_t USBD_MULTI_Setup(USBD_HandleTypeDef *pdev, USBD_SetupReqTypedef *req) {
-
 	// Please note that this might require passing based on interfaces and endpoints in bmRequestType (see 9.3 USB Device Requests of "Universal Serial Bus Specification Revision 1.1")
-	pdev->classId = HID_CLASSID;
-	USBD_HID.Setup(pdev, req);
 
-	pdev->classId = CDC_CLASSID;
-	USBD_CDC.Setup(pdev, req);
-	return USBD_OK;
+	if (req->bmRequest & 0b00000001) { // Recipient == Interface
+		switch (req->wIndex) {
+			case HID_INTERFACE:
+				pdev->classId = HID_CLASSID;
+				return USBD_HID.Setup(pdev, req);
+
+			case CDC_CIC_INTERFACE:
+			case CDC_INTERFACE:
+				pdev->classId = CDC_CLASSID;
+				return USBD_CDC.Setup(pdev, req);
+
+		}
+	} else
+	if (req->bmRequest & 0b00000010) { // Recipient == Endpoint
+		switch (req->wIndex) {
+			case CDC_IN_EP:
+			case CDC_CMD_EP:
+			case CDC_OUT_EP:
+				pdev->classId = CDC_CLASSID;
+				return USBD_CDC.Setup(pdev, req);
+
+			case HID_EPIN_ADDR:
+				pdev->classId = HID_CLASSID;
+				return USBD_HID.Setup(pdev, req);
+
+			default:
+				return USBD_FAIL;
+		}
+	}
 }
 
 static uint8_t USBD_MULTI_DataIn(USBD_HandleTypeDef *pdev, uint8_t epnum) {
@@ -283,7 +306,7 @@ static uint8_t USBD_MULTI_DataIn(USBD_HandleTypeDef *pdev, uint8_t epnum) {
 static uint8_t USBD_MULTI_DataOut(USBD_HandleTypeDef *pdev, uint8_t epnum) {
 	switch (epnum) {
 			case CDC_OUT_EP:
-				return USBD_CDC.DataOut(pdev, epnum);;
+				return USBD_CDC.DataOut(pdev, epnum);
 			default:
 				return USBD_FAIL;
 		}

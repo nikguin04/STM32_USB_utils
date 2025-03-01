@@ -41,6 +41,8 @@ extern "C" {
   * @{
   */
 #define CDC_CLASSID 								0x01
+#define CDC_CIC_INTERFACE							0x01
+#define CDC_INTERFACE								0x02
 
 #ifndef CDC_IN_EP
 #define CDC_IN_EP                                   0x81U  /* EP1 for data IN */
