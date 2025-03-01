@@ -28,9 +28,9 @@ USBD_ClassTypeDef  USBD_MULTI =
   USBD_MULTI_DeInit,
   USBD_MULTI_Setup,
   NULL,                 /* EP0_TxSent */
-  NULL, //USBD_CDC_EP0_RxReady,
-  NULL, //USBD_CDC_DataIn,
-  NULL, //USBD_CDC_DataOut,
+  USBD_MULTI_EP0_RxReady,
+  USBD_MULTI_DataIn,
+  USBD_MULTI_DataOut,
   NULL,
   NULL,
   NULL,
@@ -255,6 +255,46 @@ static uint8_t USBD_MULTI_DeInit(USBD_HandleTypeDef *pdev, uint8_t cfgidx) {
 	return (uint8_t)USBD_OK;
 }
 
+static uint8_t USBD_MULTI_Setup(USBD_HandleTypeDef *pdev, USBD_SetupReqTypedef *req) {
+
+	// Please note that this might require passing based on interfaces and endpoints in bmRequestType (see 9.3 USB Device Requests of "Universal Serial Bus Specification Revision 1.1")
+	pdev->classId = HID_CLASSID;
+	USBD_HID.Setup(pdev, req);
+
+	pdev->classId = CDC_CLASSID;
+	USBD_CDC.Setup(pdev, req);
+	return USBD_OK;
+}
+
+static uint8_t USBD_MULTI_DataIn(USBD_HandleTypeDef *pdev, uint8_t epnum) {
+	switch (epnum) {
+		case CDC_IN_EP:
+			return USBD_CDC.DataIn(pdev, epnum);
+		case CDC_CMD_EP:
+			return USBD_CDC.DataIn(pdev, epnum);
+		case HID_EPIN_ADDR:
+			return USBD_HID.DataIn(pdev, epnum);
+
+		default:
+			return USBD_FAIL;
+	}
+}
+
+static uint8_t USBD_MULTI_DataOut(USBD_HandleTypeDef *pdev, uint8_t epnum) {
+	switch (epnum) {
+			case CDC_OUT_EP:
+				return USBD_CDC.DataOut(pdev, epnum);;
+			default:
+				return USBD_FAIL;
+		}
+}
+
+
+static uint8_t USBD_MULTI_EP0_RxReady(USBD_HandleTypeDef *pdev) {
+
+	// Only CDC supports the RX ready
+	return USBD_CDC.EP0_RxReady(pdev);
+}
 
 static uint8_t *USBD_MULTI_GetFSCfgDesc(uint16_t *length)
 {
@@ -289,16 +329,7 @@ static uint8_t *USBD_MULTI_GetFSCfgDesc(uint16_t *length)
   return USBD_MULTI_CfgDesc;
 }
 
-static uint8_t USBD_MULTI_Setup(USBD_HandleTypeDef *pdev, USBD_SetupReqTypedef *req) {
 
-	// Please note that this might require passing based on interfaces and endpoints in bmRequestType (see 9.3 USB Device Requests of "Universal Serial Bus Specification Revision 1.1")
-	pdev->classId = HID_CLASSID;
-	USBD_HID.Setup(pdev, req);
-
-	pdev->classId = CDC_CLASSID;
-	USBD_CDC.Setup(pdev, req);
-	return USBD_OK;
-}
 
 static uint8_t *USBD_MULTI_GetHSCfgDesc(uint16_t *length)
 {
