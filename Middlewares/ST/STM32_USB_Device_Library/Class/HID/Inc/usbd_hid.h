@@ -40,6 +40,8 @@ extern "C" {
 /** @defgroup USBD_HID_Exported_Defines
   * @{
   */
+#define HID_CLASSID 								0x02
+
 #ifndef HID_EPIN_ADDR
 #define HID_EPIN_ADDR                              0x83U
 #endif /* HID_EPIN_ADDR */

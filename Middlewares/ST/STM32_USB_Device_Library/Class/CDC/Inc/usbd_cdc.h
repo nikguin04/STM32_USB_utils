@@ -40,6 +40,8 @@ extern "C" {
 /** @defgroup usbd_cdc_Exported_Defines
   * @{
   */
+#define CDC_CLASSID 								0x01
+
 #ifndef CDC_IN_EP
 #define CDC_IN_EP                                   0x81U  /* EP1 for data IN */
 #endif /* CDC_IN_EP */

@@ -18,4 +18,10 @@
 extern USBD_ClassTypeDef USBD_MULTI;
 #define USBD_MULTI_CLASS &USBD_MULTI;
 
+
+typedef struct
+{
+  uint32_t dummydata;
+} USBD_MULTI_HandleTypeDef;
+
 #endif /* ST_STM32_USB_DEVICE_LIBRARY_CLASS_MULTI_USBD_MULTI_H_ */

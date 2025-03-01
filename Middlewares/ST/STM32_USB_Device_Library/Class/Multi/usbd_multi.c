@@ -210,6 +210,29 @@ __ALIGN_BEGIN static uint8_t USBD_MULTI_CfgDesc[USB_MULTI_CONFIG_DESC_SIZ] __ALI
 };
 
 
+static uint8_t USBD_MULTI_Init(USBD_HandleTypeDef *pdev, uint8_t cfgidx) {
+
+	pdev->classId = HID_CLASSID;
+	USBD_HID.Init(pdev, cfgidx);
+
+	pdev->classId = CDC_CLASSID;
+	USBD_CDC.Init(pdev, cfgidx);
+
+
+	h_multi = (USBD_MULTI_HandleTypeDef *)USBD_malloc_CDC(sizeof(USBD_MULTI_HandleTypeDef));
+	if (h_multi == NULL)
+	{
+		pdev->pClassDataCmsit[pdev->classId] = NULL;
+		return (uint8_t)USBD_EMEM;
+	}
+	(void)USBD_memset(h_multi, 0, sizeof(USBD_MULTI_HandleTypeDef));
+
+	pdev->pClassDataCmsit[pdev->classId] = (void *)h_multi;
+	pdev->pClassData = pdev->pClassDataCmsit[pdev->classId];
+
+}
+
+
 static uint8_t *USBD_MULTI_GetFSCfgDesc(uint16_t *length)
 {
   USBD_EpDescTypeDef *pEpDesc = USBD_GetEpDesc(USBD_MULTI_CfgDesc, HID_EPIN_ADDR);
