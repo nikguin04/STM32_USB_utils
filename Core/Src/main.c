@@ -122,14 +122,18 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 	  if(HAL_GPIO_ReadPin (BTN_1_GPIO_Port, BTN_1_Pin)) {
+		  lcd_clear();
+		  lcd_put_str_at("Button 1", 13, 1, 0);
 		  printf("Button 1 pressed\r\n");
 	  }
 	  if(HAL_GPIO_ReadPin (BTN_2_GPIO_Port, BTN_2_Pin)) { // WARNING: This logic is faulty in the USB report cause of HAL_Delay on low clock speed (getting errors when delay is only at 10ms)
-		  printf("Button 2 pressed\r\n");
+		  //printf("Button 2 pressed\r\n");
 		  if (start_presstime == 0) { start_presstime = HAL_GetTick(); }
 		  GPIO_15_awaiting_release = 1;
 
-		  //USBD_HID_SendReport(&hUsbDeviceFS, (uint8_t*) &KR_example, KEYBOARD_REPORT_LENGTH);
+		  lcd_clear();
+		  lcd_put_str_at("Sending HID", 13, 1, 0);
+		  USBD_HID_SendReport(&hUsbDeviceFS, (uint8_t*) &KR_example, KEYBOARD_REPORT_LENGTH);
 		  sprintf(presstime_str, "Btn2 %8u ms", HAL_GetTick() - start_presstime);
 		  lcd_clear();
 		  lcd_put_str_at(presstime_str, 16, 0, 0);
@@ -137,7 +141,7 @@ int main(void)
 		  lcd_send_data(0b000); // Write our custom char
 	  } else if (GPIO_15_awaiting_release) { // Release all keys is GPIO 15 is let go of
 		  GPIO_15_awaiting_release = 0;
-		  //USBD_HID_SendReport(&hUsbDeviceFS, (uint8_t*) &KR_releaseall, KEYBOARD_REPORT_LENGTH);
+		  USBD_HID_SendReport(&hUsbDeviceFS, (uint8_t*) &KR_releaseall, KEYBOARD_REPORT_LENGTH);
 		  start_presstime = 0;
 	  }
 

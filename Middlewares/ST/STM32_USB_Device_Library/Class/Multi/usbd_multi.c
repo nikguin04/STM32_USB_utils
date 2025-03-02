@@ -82,21 +82,21 @@ __ALIGN_BEGIN static uint8_t USBD_MULTI_CfgDesc[USB_MULTI_CONFIG_DESC_SIZ] __ALI
   /*---------------------------------------------------------------------------*/
 
   // Interface association descriptor
-  0x08,
-  0x0B,
-  0x01,
-  0x02,
-  0x02,                                       /* bInterfaceClass: CDC */
-  0x02,                                       /* bInterfaceSubClass */
-  0x01,                                       /* bInterfaceProtocol */
-  0x00,
+  0x08,                                       /* bLength */
+  0x0B,                                       /* bDescriptorType */
+  CDC_CIC_INTERFACE,                          /* bFirstInterfaceNumber */
+  0x02,                                       /* bInterfaceCount */
+  0x02,                                       /* bFunctionClass: CDC */
+  0x02,                                       /* bFunctionSubClass */
+  0x01,                                       /* bFunctionProtocol */
+  0x00,                                       /* iFunction */
 
 
   /* Interface Descriptor */
   0x09,                                       /* bLength: Interface Descriptor size */
   USB_DESC_TYPE_INTERFACE,                    /* bDescriptorType: Interface */
   /* Interface descriptor type */
-  CDC_CIC_INTERFACE,                              /* bInterfaceNumber: Number of Interface */
+  CDC_CIC_INTERFACE,                          /* bInterfaceNumber: Number of Interface */
   0x00,                                       /* bAlternateSetting: Alternate setting */
   0x01,                                       /* bNumEndpoints: One endpoint used */
   0x02,                                       /* bInterfaceClass: Communication Interface Class */
@@ -144,7 +144,7 @@ __ALIGN_BEGIN static uint8_t USBD_MULTI_CfgDesc[USB_MULTI_CONFIG_DESC_SIZ] __ALI
   /* Data class interface descriptor */
   0x09,                                       /* bLength: Endpoint Descriptor size */
   USB_DESC_TYPE_INTERFACE,                    /* bDescriptorType: */
-  CDC_INTERFACE,                                       /* bInterfaceNumber: Number of Interface */
+  CDC_INTERFACE,                              /* bInterfaceNumber: Number of Interface */
   0x00,                                       /* bAlternateSetting: Alternate setting */
   0x02,                                       /* bNumEndpoints: Two endpoints used */
   0x0A,                                       /* bInterfaceClass: CDC */
@@ -201,8 +201,8 @@ __ALIGN_BEGIN static uint8_t USBD_MULTI_CfgDesc[USB_MULTI_CONFIG_DESC_SIZ] __ALI
 
   HID_EPIN_ADDR,                                      /* bEndpointAddress: Endpoint Address (IN) */
   0x03,                                               /* bmAttributes: Interrupt endpoint */
-  HID_EPIN_SIZE,                                      /* wMaxPacketSize: 4 Bytes max */
-  0x00,
+  LOBYTE(HID_EPIN_SIZE),                                      /* wMaxPacketSize: 4 Bytes max */
+  HIBYTE(HID_EPIN_SIZE),
   HID_FS_BINTERVAL,                                   /* bInterval: Polling Interval */
   /* 34 */
 
@@ -259,7 +259,7 @@ static uint8_t USBD_MULTI_DeInit(USBD_HandleTypeDef *pdev, uint8_t cfgidx) {
 static uint8_t USBD_MULTI_Setup(USBD_HandleTypeDef *pdev, USBD_SetupReqTypedef *req) {
 	// Please note that this might require passing based on interfaces and endpoints in bmRequestType (see 9.3 USB Device Requests of "Universal Serial Bus Specification Revision 1.1")
 
-	if (req->bmRequest & 0b00000001) { // Recipient == Interface
+	if ((req->bmRequest & 0b00011111) == 0b00001) { // Recipient == Interface
 		switch (req->wIndex) {
 			case HID_INTERFACE:
 				pdev->classId = HID_CLASSID;
@@ -272,7 +272,7 @@ static uint8_t USBD_MULTI_Setup(USBD_HandleTypeDef *pdev, USBD_SetupReqTypedef *
 
 		}
 	} else
-	if (req->bmRequest & 0b00000010) { // Recipient == Endpoint
+	if ((req->bmRequest & 0b00011111) == 0b00010) { // Recipient == Endpoint
 		switch (req->wIndex) {
 			case CDC_IN_EP:
 			case CDC_CMD_EP:
@@ -287,6 +287,8 @@ static uint8_t USBD_MULTI_Setup(USBD_HandleTypeDef *pdev, USBD_SetupReqTypedef *
 			default:
 				return USBD_FAIL;
 		}
+	} else {
+		printf("ERROR MULTI SETUP");
 	}
 }
 

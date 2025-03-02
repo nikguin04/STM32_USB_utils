@@ -44,7 +44,7 @@ extern "C" {
 #define HID_INTERFACE							 	0x00
 
 #ifndef HID_EPIN_ADDR
-#define HID_EPIN_ADDR                              0x83U
+#define HID_EPIN_ADDR                              0x81U
 #endif /* HID_EPIN_ADDR */
 #define HID_EPIN_SIZE                              0x04U
 
