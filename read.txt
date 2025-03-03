@@ -1,0 +1,1 @@
+Implement USBD_CoreFindIF in usbd_core.c

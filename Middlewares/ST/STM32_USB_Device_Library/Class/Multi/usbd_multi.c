@@ -79,8 +79,45 @@ __ALIGN_BEGIN static uint8_t USBD_MULTI_CfgDesc[USB_MULTI_CONFIG_DESC_SIZ] __ALI
 #endif /* USBD_SELF_POWERED */
   USBD_MAX_POWER,                             /* MaxPower (mA) */
 
+
+
+  	  // START OF KEYBOARD DESCRIPTOR!! -----------------------------------------------
+	/************** Descriptor of Joystick Mouse interface ****************/
+	/* 09 */
+	0x09,                                               /* bLength: Interface Descriptor size */
+	USB_DESC_TYPE_INTERFACE,                            /* bDescriptorType: Interface descriptor type */
+	HID_INTERFACE,                                      /* bInterfaceNumber: Number of Interface */
+	0x00,                                               /* bAlternateSetting: Alternate setting */
+	0x01,                                               /* bNumEndpoints */
+	0x03,                                               /* bInterfaceClass: HID */
+	0x01,                                               /* bInterfaceSubClass : 1=BOOT, 0=no boot */
+	0x01,                                               /* nInterfaceProtocol : 0=none, 1=keyboard, 2=mouse */
+	0x00,                                               /* iInterface: Index of string descriptor */
+	/******************** Descriptor of Joystick Mouse HID ********************/
+	/* 18 */
+	0x09,                                               /* bLength: HID Descriptor size */
+	HID_DESCRIPTOR_TYPE,                                /* bDescriptorType: HID */
+	0x11,                                               /* bcdHID: HID Class Spec release number */
+	0x01,
+	0x00,                                               /* bCountryCode: Hardware target country */
+	0x01,                                               /* bNumDescriptors: Number of HID class descriptors to follow */
+	0x22,                                               /* bDescriptorType */
+	HID_KEYBOARD_REPORT_DESC_SIZE,                         /* wItemLength: Total length of Report descriptor */
+	0x00,
+	/******************** Descriptor of Mouse endpoint ********************/
+	/* 27 */
+	0x07,                                               /* bLength: Endpoint Descriptor size */
+	USB_DESC_TYPE_ENDPOINT,                             /* bDescriptorType:*/
+
+	HID_EPIN_ADDR,                                      /* bEndpointAddress: Endpoint Address (IN) */
+	0x03,                                               /* bmAttributes: Interrupt endpoint */
+	LOBYTE(HID_EPIN_SIZE),                                      /* wMaxPacketSize: 4 Bytes max */
+	HIBYTE(HID_EPIN_SIZE),
+	HID_FS_BINTERVAL,                                   /* bInterval: Polling Interval */
+	/* 34 */
   /*---------------------------------------------------------------------------*/
 
+	// START OF CDC DESCRIPTOR!! -----------------------------------------------
   // Interface association descriptor
   0x08,                                       /* bLength */
   0x0B,                                       /* bDescriptorType */
@@ -171,41 +208,6 @@ __ALIGN_BEGIN static uint8_t USBD_MULTI_CfgDesc[USB_MULTI_CONFIG_DESC_SIZ] __ALI
   0x00,                                        /* bInterval */
 
 
-  // START OF KEYBOARD DESCRIPTOR!! -----------------------------------------------
-  /************** Descriptor of Joystick Mouse interface ****************/
-  /* 09 */
-  0x09,                                               /* bLength: Interface Descriptor size */
-  USB_DESC_TYPE_INTERFACE,                            /* bDescriptorType: Interface descriptor type */
-  HID_INTERFACE,                                      /* bInterfaceNumber: Number of Interface */
-  0x00,                                               /* bAlternateSetting: Alternate setting */
-  0x01,                                               /* bNumEndpoints */
-  0x03,                                               /* bInterfaceClass: HID */
-  0x01,                                               /* bInterfaceSubClass : 1=BOOT, 0=no boot */
-  0x01,                                               /* nInterfaceProtocol : 0=none, 1=keyboard, 2=mouse */
-  0x00,                                               /* iInterface: Index of string descriptor */
-  /******************** Descriptor of Joystick Mouse HID ********************/
-  /* 18 */
-  0x09,                                               /* bLength: HID Descriptor size */
-  HID_DESCRIPTOR_TYPE,                                /* bDescriptorType: HID */
-  0x11,                                               /* bcdHID: HID Class Spec release number */
-  0x01,
-  0x00,                                               /* bCountryCode: Hardware target country */
-  0x01,                                               /* bNumDescriptors: Number of HID class descriptors to follow */
-  0x22,                                               /* bDescriptorType */
-  HID_KEYBOARD_REPORT_DESC_SIZE,                         /* wItemLength: Total length of Report descriptor */
-  0x00,
-  /******************** Descriptor of Mouse endpoint ********************/
-  /* 27 */
-  0x07,                                               /* bLength: Endpoint Descriptor size */
-  USB_DESC_TYPE_ENDPOINT,                             /* bDescriptorType:*/
-
-  HID_EPIN_ADDR,                                      /* bEndpointAddress: Endpoint Address (IN) */
-  0x03,                                               /* bmAttributes: Interrupt endpoint */
-  LOBYTE(HID_EPIN_SIZE),                                      /* wMaxPacketSize: 4 Bytes max */
-  HIBYTE(HID_EPIN_SIZE),
-  HID_FS_BINTERVAL,                                   /* bInterval: Polling Interval */
-  /* 34 */
-
 
 };
 
@@ -270,6 +272,9 @@ static uint8_t USBD_MULTI_Setup(USBD_HandleTypeDef *pdev, USBD_SetupReqTypedef *
 				pdev->classId = CDC_CLASSID;
 				return USBD_CDC.Setup(pdev, req);
 
+			default:
+				return USBD_FAIL;
+
 		}
 	} else
 	if ((req->bmRequest & 0b00011111) == 0b00010) { // Recipient == Endpoint
@@ -289,6 +294,7 @@ static uint8_t USBD_MULTI_Setup(USBD_HandleTypeDef *pdev, USBD_SetupReqTypedef *
 		}
 	} else {
 		printf("ERROR MULTI SETUP");
+		return USBD_FAIL;
 	}
 }
 
@@ -323,7 +329,12 @@ static uint8_t USBD_MULTI_DataOut(USBD_HandleTypeDef *pdev, uint8_t epnum) {
 static uint8_t USBD_MULTI_EP0_RxReady(USBD_HandleTypeDef *pdev) {
 
 	// Only CDC supports the RX ready
-	return USBD_CDC.EP0_RxReady(pdev);
+	//pdev->classId = CDC_CLASSID;
+	if (pdev->classId == CDC_CLASSID) {
+		return USBD_CDC.EP0_RxReady(pdev);
+	} else {
+		return 0;
+	}
 }
 
 static uint8_t *USBD_MULTI_GetFSCfgDesc(uint16_t *length)

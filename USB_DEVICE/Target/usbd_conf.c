@@ -361,7 +361,7 @@ USBD_StatusTypeDef USBD_LL_Init(USBD_HandleTypeDef *pdev)
   HAL_PCDEx_SetTxFiFo(&hpcd_USB_OTG_FS, 1, 0x80);
 
   HAL_PCDEx_SetTxFiFo(&hpcd_USB_OTG_FS, 2, 256); // CDC_DATA_FS_MAX_PACKET_SIZE
-  HAL_PCDEx_SetTxFiFo(&hpcd_USB_OTG_FS, 3, 16); // CDC_CMD_PACKET_SIZE
+  HAL_PCDEx_SetTxFiFo(&hpcd_USB_OTG_FS, 3, 256); // CDC_CMD_PACKET_SIZE
   }
   return USBD_OK;
 }

@@ -632,10 +632,10 @@ USBD_StatusTypeDef USBD_LL_DataOutStage(USBD_HandleTypeDef *pdev,
           /* Setup the class ID and route the request to the relative class function */
           if (pdev->dev_state == USBD_STATE_CONFIGURED)
           {
-            if (pdev->pClass[idx]->EP0_RxReady != NULL)
+            if (pdev->pClass[0]->EP0_RxReady != NULL)
             {
               pdev->classId = idx;
-              pdev->pClass[idx]->EP0_RxReady(pdev);
+              pdev->pClass[0]->EP0_RxReady(pdev);
             }
           }
         }
@@ -647,7 +647,8 @@ USBD_StatusTypeDef USBD_LL_DataOutStage(USBD_HandleTypeDef *pdev,
   else
   {
     /* Get the class index relative to this interface */
-    idx = USBD_CoreFindEP(pdev, (epnum & 0x7FU));
+    //idx = USBD_CoreFindEP(pdev, (epnum & 0x7FU));
+	idx = 0;
 
     if (((uint16_t)idx != 0xFFU) && (idx < USBD_MAX_SUPPORTED_CLASS))
     {
@@ -738,7 +739,8 @@ USBD_StatusTypeDef USBD_LL_DataInStage(USBD_HandleTypeDef *pdev,
   else
   {
     /* Get the class index relative to this interface */
-    idx = USBD_CoreFindEP(pdev, ((uint8_t)epnum | 0x80U));
+    //idx = USBD_CoreFindEP(pdev, ((uint8_t)epnum | 0x80U));
+    idx = 0;
 
     if (((uint16_t)idx != 0xFFU) && (idx < USBD_MAX_SUPPORTED_CLASS))
     {
@@ -1063,10 +1065,18 @@ uint8_t USBD_CoreFindIF(USBD_HandleTypeDef *pdev, uint8_t index)
 
   return 0xFFU;
 #else
-  UNUSED(pdev);
-  UNUSED(index);
+  switch (index) {
+	case HID_INTERFACE:
+		return HID_CLASSID;
 
-  return 0x00U;
+	case CDC_CIC_INTERFACE:
+	case CDC_INTERFACE:
+		return CDC_CLASSID;
+
+	default:
+		return 0x00U;
+
+  }
 #endif /* USE_USBD_COMPOSITE */
 }
 
@@ -1103,10 +1113,19 @@ uint8_t USBD_CoreFindEP(USBD_HandleTypeDef *pdev, uint8_t index)
 
   return 0xFFU;
 #else
-  UNUSED(pdev);
-  UNUSED(index);
+  switch (index) {
+  	case HID_EPIN_ADDR:
+	  return HID_CLASSID;
 
-  return 0x00U;
+  	case CDC_IN_EP:
+  	case CDC_CMD_EP:
+  	case CDC_OUT_EP:
+  		return CDC_CLASSID;
+
+  	default:
+  		return 0x00U;
+
+    }
 #endif /* USE_USBD_COMPOSITE */
 }
 
