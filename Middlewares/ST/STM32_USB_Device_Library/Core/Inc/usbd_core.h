@@ -30,6 +30,9 @@ extern "C" {
 #include "usbd_ioreq.h"
 #include "usbd_ctlreq.h"
 
+#include "usbd_cdc.h"
+#include "usbd_hid.h"
+
 /** @addtogroup STM32_USB_DEVICE_LIBRARY
   * @{
   */

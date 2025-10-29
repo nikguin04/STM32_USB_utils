@@ -183,7 +183,8 @@ USBD_StatusTypeDef USBD_StdItfReq(USBD_HandleTypeDef *pdev, USBD_SetupReqTypedef
           if (LOBYTE(req->wIndex) <= USBD_MAX_NUM_INTERFACES)
           {
             /* Get the class index relative to this interface */
-            idx = USBD_CoreFindIF(pdev, LOBYTE(req->wIndex));
+            //idx = USBD_CoreFindIF(pdev, LOBYTE(req->wIndex));¨
+        	idx = 0x00U;
             if (((uint8_t)idx != 0xFFU) && (idx < USBD_MAX_SUPPORTED_CLASS))
             {
               /* Call the class data out function to manage the request */
@@ -250,7 +251,8 @@ USBD_StatusTypeDef USBD_StdEPReq(USBD_HandleTypeDef *pdev, USBD_SetupReqTypedef 
     case USB_REQ_TYPE_CLASS:
     case USB_REQ_TYPE_VENDOR:
       /* Get the class index relative to this endpoint */
-      idx = USBD_CoreFindEP(pdev, ep_addr);
+      //idx = USBD_CoreFindEP(pdev, ep_addr);
+      idx = 0;
       if (((uint8_t)idx != 0xFFU) && (idx < USBD_MAX_SUPPORTED_CLASS))
       {
         pdev->classId = idx;
@@ -324,7 +326,8 @@ USBD_StatusTypeDef USBD_StdEPReq(USBD_HandleTypeDef *pdev, USBD_SetupReqTypedef 
                 (void)USBD_CtlSendStatus(pdev);
 
                 /* Get the class index relative to this interface */
-                idx = USBD_CoreFindEP(pdev, ep_addr);
+                //idx = USBD_CoreFindEP(pdev, ep_addr);
+                idx = 0;
                 if (((uint8_t)idx != 0xFFU) && (idx < USBD_MAX_SUPPORTED_CLASS))
                 {
                   pdev->classId = idx;

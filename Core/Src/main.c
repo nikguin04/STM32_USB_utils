@@ -24,6 +24,7 @@
 /* USER CODE BEGIN Includes */
 #include "usbd_hid.h"
 #include "Driver_1602.h"
+#include "stdbool.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -57,6 +58,7 @@ static void MX_GPIO_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 int _write(int file, char *ptr, int len) {
+	CDC_Transmit_FS(ptr, (uint16_t)len);
     return len;
 }
 /* USER CODE END 0 */
@@ -120,13 +122,18 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 	  if(HAL_GPIO_ReadPin (BTN_1_GPIO_Port, BTN_1_Pin)) {
+		  lcd_clear();
+		  lcd_put_str_at("Button 1", 13, 1, 0);
 		  printf("Button 1 pressed\r\n");
+		  //printf("test");
 	  }
 	  if(HAL_GPIO_ReadPin (BTN_2_GPIO_Port, BTN_2_Pin)) { // WARNING: This logic is faulty in the USB report cause of HAL_Delay on low clock speed (getting errors when delay is only at 10ms)
-		  printf("Button 2 pressed\r\n");
+		  //printf("Button 2 pressed\r\n");
 		  if (start_presstime == 0) { start_presstime = HAL_GetTick(); }
 		  GPIO_15_awaiting_release = 1;
 
+		  lcd_clear();
+		  lcd_put_str_at("Sending HID", 13, 1, 0);
 		  USBD_HID_SendReport(&hUsbDeviceFS, (uint8_t*) &KR_example, KEYBOARD_REPORT_LENGTH);
 		  sprintf(presstime_str, "Btn2 %8u ms", HAL_GetTick() - start_presstime);
 		  lcd_clear();

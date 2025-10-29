@@ -25,6 +25,8 @@
 #include "usbd_core.h"
 
 #include "usbd_hid.h"
+#include "usbd_cdc.h"
+#include "usbd_multi.h"
 
 /* USER CODE BEGIN Includes */
 
@@ -325,7 +327,7 @@ USBD_StatusTypeDef USBD_LL_Init(USBD_HandleTypeDef *pdev)
   pdev->pData = &hpcd_USB_OTG_FS;
 
   hpcd_USB_OTG_FS.Instance = USB_OTG_FS;
-  hpcd_USB_OTG_FS.Init.dev_endpoints = 4;
+  hpcd_USB_OTG_FS.Init.dev_endpoints = 6;
   hpcd_USB_OTG_FS.Init.speed = PCD_SPEED_FULL;
   hpcd_USB_OTG_FS.Init.dma_enable = DISABLE;
   hpcd_USB_OTG_FS.Init.phy_itface = PCD_PHY_EMBEDDED;
@@ -357,6 +359,9 @@ USBD_StatusTypeDef USBD_LL_Init(USBD_HandleTypeDef *pdev)
   HAL_PCDEx_SetRxFiFo(&hpcd_USB_OTG_FS, 0x80);
   HAL_PCDEx_SetTxFiFo(&hpcd_USB_OTG_FS, 0, 0x40);
   HAL_PCDEx_SetTxFiFo(&hpcd_USB_OTG_FS, 1, 0x80);
+
+  HAL_PCDEx_SetTxFiFo(&hpcd_USB_OTG_FS, 2, 256); // CDC_DATA_FS_MAX_PACKET_SIZE
+  HAL_PCDEx_SetTxFiFo(&hpcd_USB_OTG_FS, 3, 256); // CDC_CMD_PACKET_SIZE
   }
   return USBD_OK;
 }
@@ -614,9 +619,21 @@ USBD_StatusTypeDef USBD_LL_SetTestMode(USBD_HandleTypeDef *pdev, uint8_t testmod
   * @param  size: Size of allocated memory
   * @retval None
   */
-void *USBD_static_malloc(uint32_t size)
+void *USBD_static_malloc_HID(uint32_t size)
 {
   static uint32_t mem[(sizeof(USBD_HID_HandleTypeDef)/4)+1];/* On 32-bit boundary */
+  return mem;
+}
+
+void *USBD_static_malloc_CDC(uint32_t size)
+{
+  static uint32_t mem[(sizeof(USBD_CDC_HandleTypeDef)/4)+1];/* On 32-bit boundary */
+  return mem;
+}
+
+void *USBD_static_malloc_MULTI(uint32_t size)
+{
+  static uint32_t mem[(sizeof(USBD_MULTI_HandleTypeDef)/4)+1];/* On 32-bit boundary */
   return mem;
 }
 
